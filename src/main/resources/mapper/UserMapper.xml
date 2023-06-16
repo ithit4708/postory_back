@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jungsuk_2_1.postory.dao.UserDao">
+    <select id="existsByUserEmail" parameterType="String" resultType="boolean">
+        SELECT EXISTS(SELECT 1 FROM user WHERE eid = #{eid}) AS user_exists;
+    </select>
+
+    <select id="findByUserEmail" parameterType="String" resultType="UserDto">
+        SELECT * FROM user WHERE eid = #{eid};
+    </select>
+
+    <insert id="save" parameterType="UserDto">
+        insert into user (USER_ID, EID, PWD, NIC, USER_INTRO, USER_IMG_PATH, SIGNUP_DTM, HOLD_PNT, MSG_ALOW_YN)
+        values (#{userId}, #{eid}, #{pwd}, #{nic}, #{userIntro}, #{userImgPath}, now(), #{holdPnt}, #{msgAlowYn})
+    </insert>
+</mapper>
