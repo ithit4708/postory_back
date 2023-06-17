@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jungsuk_2_1.postory.dao.ChannelDao">
+
+    <insert id="save" parameterType="ChannelDto">
+        insert into
+            channel
+        (CHNL_ID, CHNL_TTL, CHNL_INTRO, CHNL_URI, CHNL_SB_TTL, CHNL_IMG_PATH, SUBER_CNT, CHNL_POST_CNT, CHNL_LIK_CNT, CHNL_OPEN_DTM, CRT_ID, HMPG_URL, INSTA_URL, GITH_URL, YTB_URL, TWCH_URL, CHNL_STUS_CD, CHNL_STUS_CHGR_ID, CHNL_STUS_CHG_DTM)
+        VALUES
+            (#{chnlId}, #{chnlTtl}, #{chnlIntro}, #{chnlUri}, #{chnlSbTtl}, #{chnlImgPath}, #{suberCnt}, #{chnlPostCnt}, #{chnlLikCnt}, NOW(), #{crtId}, #{hmpgUrl}, #{instaUrl}, #{githUrl}, #{ytbUrl}, #{twchUrl}, #{chnlStusCd}, #{chnlStusChgrId}, NOW());
+    </insert>
+
+    <delete id="delete" parameterType="ChannelDto">
+        DELETE FROM channel WHERE CHNL_ID = #{chnlId}
+    </delete>
+
+
+    <select id="findLastId" resultType="int">
+        SELECT MAX(CHNL_ID) FROM channel
+    </select>
+
+    <select id="getChannels" resultType="ChannelDto">
+        SELECT * FROM channel
+    </select>
+
+    <select id="findByUserId" parameterType="String" resultType="ChannelDto">
+        SELECT *
+        FROM channel
+        WHERE CRT_ID = #{userId}
+    </select>
+
+    <select id="findById" parameterType="int" resultType="ChannelDto">
+        SELECT * FROM channel WHERE CHNL_ID = #{chnlId}
+    </select>
+
+
+</mapper>
