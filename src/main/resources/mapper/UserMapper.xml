@@ -17,10 +17,14 @@
 
     <insert id="statusSave" parameterType="UserDto">
         insert into user_status (SNO,USER_ID, COMT, USER_STUS_CD, USER_STUS_UPD_DTM, USER_STUS_UPDR_ID)
-        values (1,#{userId},default,'ST00110',now(),'1613968465c8489a94e47152ecd1aeaa')
+        values (1,#{userId},default,'ST00110',now(),'cea3e368d10042fe81134c6b8bf83b3d')
     </insert>
 
     <select id="findStatusByUserId" parameterType="String" resultType="String">
         select user_stus_cd from user_status where user_id = #{userId}
+    </select>
+
+    <select id="findByUserId" parameterType="String" resultType="UserDto">
+        select user_id,eid from user where user_id = #{userId}
     </select>
 </mapper>

@@ -8,14 +8,15 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class UserService {
+public class UserServiceImpl implements UserService {
 
     private UserDao userDao;
     //생성자로 객체 주입받는 방법(Autowired 생략 가능)
-    UserService(UserDao userDao) {
+    UserServiceImpl(UserDao userDao) {
         this.userDao = userDao;
     }
 
+    @Override
     public void create(final UserDto userDto) {
 
         //추가정보까지 더한 요청받은 유저 객체 정보의 EmaiId 유효성 검사
@@ -43,6 +44,7 @@ public class UserService {
         userDao.statusSave(userDto.getUserId());
     }
 
+    @Override
     public UserDto getByCredentials(final String userEmail, final String password, final PasswordEncoder encoder) {
         final UserDto originalUser = userDao.findByUserEmail(userEmail);
 
@@ -52,6 +54,7 @@ public class UserService {
         }
         return null;
     }
+    @Override
     public String checkUserStatus(UserDto userDto) {
         return userDao.findStatusByUserId(userDto.getUserId());
     }

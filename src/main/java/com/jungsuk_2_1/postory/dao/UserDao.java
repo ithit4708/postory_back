@@ -10,4 +10,5 @@ public interface UserDao {
     void save(UserDto userDto);
     void statusSave(String userId);
     String findStatusByUserId(String userId);
+    UserDto findByUserId(String userId);
 }
