@@ -3,6 +3,10 @@
 
 <mapper namespace="com.jungsuk_2_1.postory.dao.ChannelDao">
 
+    <sql id="statusCondition">
+        CHNL_STUS_CD = 'ST00210'
+    </sql>
+
     <insert id="save" parameterType="ChannelDto">
         insert into
             channel
@@ -11,10 +15,34 @@
             (#{chnlId}, #{chnlTtl}, #{chnlIntro}, #{chnlUri}, #{chnlSbTtl}, #{chnlImgPath}, #{suberCnt}, #{chnlPostCnt}, #{chnlLikCnt}, NOW(), #{crtId}, #{hmpgUrl}, #{instaUrl}, #{githUrl}, #{ytbUrl}, #{twchUrl}, #{chnlStusCd}, #{chnlStusChgrId}, NOW());
     </insert>
 
-    <delete id="delete" parameterType="ChannelDto">
-        DELETE FROM channel WHERE CHNL_ID = #{chnlId}
-    </delete>
+    <update id="update" parameterType="ChannelDto">
+        UPDATE channel
+        SET
+            CHNL_URI = #{chnlUri},
+            CHNL_TTL = #{chnlTtl},
+            CHNL_IMG_PATH = #{chnlImgPath},
+            CHNL_INTRO = #{chnlIntro},
+            CHNL_SB_TTL = #{chnlSbTtl}
+        WHERE CHNL_ID = #{chnlId};
+    </update>
 
+    <select id="doesUriExist" resultType="boolean" parameterType="String">
+        select exists(select  1 from channel where chnl_uri = #{chnlUri})
+        AND
+        <include refid="statusCondition"/>
+    </select>
+
+    <update id="delete" parameterType="ChannelDto">
+        update channel
+        set  CHNL_STUS_CD = #{chnlStusCd}
+        where CHNL_ID = #{chnlId}
+        AND
+        <include refid="statusCondition"/>
+    </update>
+
+    <select id="findByUserNic" parameterType="String" resultType="ChannelDto">
+
+    </select>
 
     <select id="findLastId" resultType="int">
         SELECT MAX(CHNL_ID) FROM channel
@@ -28,10 +56,26 @@
         SELECT *
         FROM channel
         WHERE CRT_ID = #{userId}
+        AND
+        <include refid="statusCondition"/>
     </select>
 
     <select id="findById" parameterType="int" resultType="ChannelDto">
         SELECT * FROM channel WHERE CHNL_ID = #{chnlId}
+        AND
+        <include refid="statusCondition"/>
+    </select>
+
+    <select id="countUserChannels" parameterType="String" resultType="int">
+        SELECT count(*) from channel where CRT_ID = #{crtId}
+        AND
+        <include refid="statusCondition"/>
+    </select>
+
+    <select id="findByChnlUri" parameterType="String" resultType="ChannelDto">
+         select * from channel where chnl_uri = #{chnlUri};
+        AND
+        <include refid="statusCondition"/>
     </select>
 
 
