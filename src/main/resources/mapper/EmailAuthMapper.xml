@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jungsuk_2_1.postory.dao.EmailAuthDao">
+    <insert id="save" parameterType="EmailAuthDto">
+        insert into email (email_id,user_id,expi_dtm,email,certino)
+        values (#{emailId},#{userId},DATE_ADD(NOW(), INTERVAL 3.5 MINUTE),#{email},#{certino})
+    </insert>
+
+    <select id="findExpireTimeByUser" parameterType="EmailAuthDto" resultType="Date">
+        select expi_dtm from email where user_id = #{userId} order by expi_dtm DESC LIMIT 1
+    </select>
+
+    <select id="existsByUserIdAndCertino" parameterType="Map" resultType="boolean">
+        SELECT EXISTS(SELECT 1 FROM email WHERE user_id=#{userId} AND certino = #{certino});
+    </select>
+
+    <insert id="addUserStatus" parameterType="String">
+        insert into user_status (SNO,USER_ID, COMT, USER_STUS_CD, USER_STUS_UPD_DTM, USER_STUS_UPDR_ID)
+        values (2,#{userId},default,'ST00120',now(),'cea3e368d10042fe81134c6b8bf83b3d')
+    </insert>
+</mapper>
