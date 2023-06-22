@@ -3,7 +3,7 @@ package com.jungsuk_2_1.postory.controller;
 import com.jungsuk_2_1.postory.dto.ResponseDto;
 import com.jungsuk_2_1.postory.security.TokenProvider;
 import com.jungsuk_2_1.postory.dto.UserDto;
-import com.jungsuk_2_1.postory.service.UserService;
+import com.jungsuk_2_1.postory.service.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +18,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/auth")
 public class UserController {
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
     private TokenProvider tokenProvider;
 
     //생성자로 객체 주입받는 방법(Autowired 생략 가능)
-    UserController(UserService userService, TokenProvider tokenProvider) {
-        this.userService = userService;
+    UserController(UserServiceImpl userServiceImpl, TokenProvider tokenProvider) {
+        this.userServiceImpl = userServiceImpl;
         this.tokenProvider = tokenProvider;
     }
 
@@ -59,7 +59,7 @@ public class UserController {
                     .build();
 
             //DB에 유저를 저장(생성)하는 create()메서드 호출(반환X, void)
-            userService.create(user);
+            userServiceImpl.create(user);
             log.info("Signup Success");
             //회원가입 후 로그인페이지로 리다이렉트(302) 요청 - HttpStatus.FOUND
             return ResponseEntity.status(HttpStatus.FOUND)
@@ -77,7 +77,7 @@ public class UserController {
     public ResponseEntity<?> authenticate(@RequestBody UserDto userDto) {
         //[유효성검사] 입력받은 이메일로 유저정보를 찾고, 그 유저정보에서 입력받은 비밀번호와 일치여부 확인.
         //확인된 유저를 객체로 반환. 일치안하면 null 반환
-        UserDto user = userService.getByCredentials(
+        UserDto user = userServiceImpl.getByCredentials(
                 userDto.getEid(),
                 userDto.getPwd(),
                 passwordEncoder); //서비스에 BCryptPasswordEncoder 객체를 넘겨주기
@@ -86,12 +86,12 @@ public class UserController {
             //유저 개인의 JWT 토큰 생성
             final String token = tokenProvider.create(user);
             //로그인한 유저 상태 확인
-            String userStatus = userService.checkUserStatus(user);
+            String userStatus = userServiceImpl.checkUserStatus(user);
             //유저의 상태가 신규=ST00110 이면 이메일 인증 페이지로 가라고 리다이렉트 요청 넘겨주기
             if (Objects.equals(userStatus, "ST00110")) {
                 return ResponseEntity.status(HttpStatus.FOUND)
                         .header("Location", "/auth/email")
-                        .body("회원상태 : 신규 / 이메일인증 페이지로 리다이렉트 합니다.");
+                        .body("회원상태 : 신규 / 이메일인증 페이지로 리다이렉트 합니다. token = "+token);
             }
             //유저의 상태가 신규가 아니면 body에 토큰 싫어서 보내기
             return ResponseEntity.status(HttpStatus.FOUND)
