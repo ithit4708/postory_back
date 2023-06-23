@@ -10,6 +10,21 @@
         SELECT * FROM user WHERE eid = #{eid};
     </select>
 
+    <select id="findByChnlUri" resultType="ChannelUserDto">
+        SELECT
+            u.EID as eid,
+            u.NIC as nic,
+            u.USER_INTRO as userIntro,
+            u.USER_IMG_PATH as userImgPath,
+            u.MSG_ALOW_YN as msgAlowYn
+        FROM
+            user u
+                INNER JOIN
+            channel c ON u.USER_ID = c.CRT_ID
+        WHERE
+            c.CHNL_URI = #{chnlUri}
+    </select>
+
     <insert id="save" parameterType="UserDto">
         insert into user (USER_ID, EID, PWD, NIC, USER_INTRO, USER_IMG_PATH, SIGNUP_DTM, HOLD_PNT, MSG_ALOW_YN)
         values (#{userId}, #{eid}, #{pwd}, #{nic}, #{userIntro}, #{userImgPath}, now(), #{holdPnt}, true);

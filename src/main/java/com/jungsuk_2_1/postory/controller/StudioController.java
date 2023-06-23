@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -44,9 +45,11 @@ public class StudioController {
     @PutMapping
     public ResponseEntity<?> update(@AuthenticationPrincipal String userId,@RequestBody ChannelDto channelDto){
 
-        List<ChannelDto> dtos = channelService.update(userId,channelDto);
+        ChannelDto dto = channelService.update(userId,channelDto);
+        List<ChannelDto> data = new ArrayList<>();
+        data.add(dto);
 
-        ResponseDto<ChannelDto> response = ResponseDto.<ChannelDto>builder().data(dtos).build();
+        ResponseDto<ChannelDto> response = ResponseDto.<ChannelDto>builder().data(data).build();
 
         return ResponseEntity.ok().body(response);
     }

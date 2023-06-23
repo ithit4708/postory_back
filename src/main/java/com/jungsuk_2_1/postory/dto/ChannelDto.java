@@ -67,4 +67,6 @@ public class ChannelDto {
     /* CHNL_STUS_CHG_DTM */
     private String chnlStusChgDtm;
 
+    private String crtNic;
+
 }

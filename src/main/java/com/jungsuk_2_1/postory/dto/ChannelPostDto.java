@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostDto {
+public class ChannelPostDto {
     /* POST_ID */
     private Integer postId;
 
@@ -74,13 +74,16 @@ public class PostDto {
     /* NOW_POST_STUD_CHG_DTM */
     private String nowPostStudChgDtm;
 
-    /* NOW_POST_STUS_CHGR_ID */
-    private String nowPostStusChgrId;
-
     /* BEF_POST_ID */
     private Integer befPostId;
 
     /* NEXT_POST_ID */
     private Integer nextPostId;
+
+    private String serTtl;
+
+    private String nowPostStusCdNm;
+
+    private Object styleText;
 
 }

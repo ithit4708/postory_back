@@ -34,7 +34,7 @@
 
     <update id="delete" parameterType="ChannelDto">
         update channel
-        set  CHNL_STUS_CD = #{chnlStusCd}
+        set  CHNL_STUS_CD = "ST00220"
         where CHNL_ID = #{chnlId}
         AND
         <include refid="statusCondition"/>
@@ -48,20 +48,68 @@
         SELECT MAX(CHNL_ID) FROM channel
     </select>
 
-    <select id="getChannels" resultType="ChannelDto">
-        SELECT * FROM channel
-    </select>
-
     <select id="findByUserId" parameterType="String" resultType="ChannelDto">
-        SELECT *
-        FROM channel
-        WHERE CRT_ID = #{userId}
+        SELECT
+        channel.CHNL_ID,
+        channel.CHNL_TTL,
+        channel.CHNL_INTRO,
+        channel.CHNL_URI,
+        channel.CHNL_SB_TTL,
+        channel.CHNL_IMG_PATH,
+        channel.SUBER_CNT,
+        channel.CHNL_POST_CNT,
+        channel.CHNL_LIK_CNT,
+        channel.CHNL_OPEN_DTM,
+        user1.NIC as crtNic,
+        channel.HMPG_URL,
+        channel.INSTA_URL,
+        channel.GITH_URL,
+        channel.YTB_URL,
+        channel.TWCH_URL,
+        channel.CHNL_STUS_CHG_DTM
+        FROM
+        channel
+        INNER JOIN
+        user AS user1 ON channel.CRT_ID = user1.USER_ID
+        INNER JOIN
+        common_code ON channel.CHNL_STUS_CD = common_code.CD
+        INNER JOIN
+        user AS user2 ON channel.CHNL_STUS_CHGR_ID = user2.USER_ID
+        WHERE
+            CRT_ID = #{userId}
         AND
         <include refid="statusCondition"/>
     </select>
 
     <select id="findById" parameterType="int" resultType="ChannelDto">
-        SELECT * FROM channel WHERE CHNL_ID = #{chnlId}
+        SELECT
+        channel.CHNL_ID,
+        channel.CHNL_TTL,
+        channel.CHNL_INTRO,
+        channel.CHNL_URI,
+        channel.CHNL_SB_TTL,
+        channel.CHNL_IMG_PATH,
+        channel.SUBER_CNT,
+        channel.CHNL_POST_CNT,
+        channel.CHNL_LIK_CNT,
+        channel.CHNL_OPEN_DTM,
+        user1.NIC as crtNic,
+        channel.HMPG_URL,
+        channel.INSTA_URL,
+        channel.GITH_URL,
+        channel.YTB_URL,
+        channel.TWCH_URL,
+        channel.CHNL_STUS_CHG_DTM
+        FROM
+        channel
+        INNER JOIN
+        user AS user1 ON channel.CRT_ID = user1.USER_ID
+        INNER JOIN
+        common_code ON channel.CHNL_STUS_CD = common_code.CD
+        INNER JOIN
+        user AS user2 ON channel.CHNL_STUS_CHGR_ID = user2.USER_ID
+        WHERE
+            CHNL_ID = #{chnlId}
         AND
         <include refid="statusCondition"/>
     </select>
@@ -73,10 +121,38 @@
     </select>
 
     <select id="findByChnlUri" parameterType="String" resultType="ChannelDto">
-         select * from channel where chnl_uri = #{chnlUri};
+        SELECT
+        channel.CHNL_ID,
+        channel.CHNL_TTL,
+        channel.CHNL_INTRO,
+        channel.CHNL_URI,
+        channel.CHNL_SB_TTL,
+        channel.CHNL_IMG_PATH,
+        channel.SUBER_CNT,
+        channel.CHNL_POST_CNT,
+        channel.CHNL_LIK_CNT,
+        channel.CHNL_OPEN_DTM,
+        user1.NIC as crtNic,
+        channel.HMPG_URL,
+        channel.INSTA_URL,
+        channel.GITH_URL,
+        channel.YTB_URL,
+        channel.TWCH_URL,
+        channel.CHNL_STUS_CHG_DTM
+        FROM
+        channel
+        INNER JOIN
+        user AS user1 ON channel.CRT_ID = user1.USER_ID
+        INNER JOIN
+        common_code ON channel.CHNL_STUS_CD = common_code.CD
+        INNER JOIN
+        user AS user2 ON channel.CHNL_STUS_CHGR_ID = user2.USER_ID
+        WHERE
+        channel.CHNL_URI = #{chnlUri}
         AND
         <include refid="statusCondition"/>
     </select>
+
 
 
 </mapper>

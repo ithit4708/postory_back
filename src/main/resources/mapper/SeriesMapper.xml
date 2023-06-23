@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jungsuk_2_1.postory.dao.SeriesDao">
+
+    <select id="findByChnlUri" parameterType="map" resultType="ChannelSeriesDto">
+        SELECT
+        s.SER_ID,
+        s.SER_THUMN_PATH,
+        s.SER_TTL,
+        s.SER_DESC,
+        s.SER_OPEN_DTM,
+        s.SER_INQR_CNT,
+        s.SER_LIK_CNT,
+        s.SER_REP_CNT,
+        s.SER_POST_CNT,
+        s.CHNL_DSGNT_SER_ODR,
+        s.SER_STUS_CHG_DTM,
+        cd.CD_NM as serStusCdNm,
+        u.NIC as userNic
+        FROM series AS s
+        INNER JOIN channel AS c ON s.CHNL_ID = c.CHNL_ID
+        INNER JOIN user as u ON c.CRT_ID = u.USER_ID
+        INNER JOIN common_code as cd ON s.SER_STUS_CD = cd.CD
+        WHERE c.CHNL_URI = #{chnlUri}
+        <choose>
+            <when test="orderMethod == 'default'">
+                ORDER BY s.CHNL_DSGNT_SER_ODR DESC
+            </when>
+            <when test="orderMethod == 'latest'">
+                ORDER BY s.SER_OPEN_DTM DESC
+            </when>
+            <when test="orderMethod == 'popularity'">
+                ORDER BY s.SER_LIK_CNT DESC
+            </when>
+        </choose>
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+</mapper>

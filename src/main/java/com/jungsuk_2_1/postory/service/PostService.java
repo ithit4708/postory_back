@@ -1,7 +1,7 @@
 package com.jungsuk_2_1.postory.service;
 
 import com.jungsuk_2_1.postory.dao.PostDao;
-import com.jungsuk_2_1.postory.dto.PostDto;
+import com.jungsuk_2_1.postory.dto.ChannelPostDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,16 +23,17 @@ public class PostService {
     this.postDao = postDao;
   }
 
-  public List<PostDto> createPost(){
+  public List<ChannelPostDto> createPost(){
     return postDao.createPost();
   }
 
-  public List<PostDto> getPostsByChnlUri(String chnlUri, int page, String orderMethod) {
+  public List<ChannelPostDto> getPostsByChnlUri(String chnlUri, int page, String orderMethod, int pageSize) {
 
     Map<String, Object> params = new HashMap<>();
+    params.put("name", "channelPosts");
     params.put("chnlUri", chnlUri);
-    params.put("pageSize", 12);
-    params.put("offset", (page - 1) * 12);
+    params.put("pageSize", pageSize);
+    params.put("offset", (page - 1) * pageSize);
     params.put("orderMethod", orderMethod);
 
     return postDao.getPostsByChnlUri(params);
