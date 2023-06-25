@@ -59,7 +59,7 @@ public class EmailAuthController {
     }
 
     @PostMapping("/confirm")
-    public ResponseEntity<?> emailConfirm(@AuthenticationPrincipal String userId, EmailAuthDto certino) {
+    public ResponseEntity<?> emailConfirm(@AuthenticationPrincipal String userId, EmailAuthDto certino) throws Exception {
         //토큰으로 확인한 유저의 uuid와 입력받은 인증번호를 이용해서 DB에 있는지 확인한다.
         //Dto 대신에
         Map<String, String> certinoCheckMap = new HashMap();
