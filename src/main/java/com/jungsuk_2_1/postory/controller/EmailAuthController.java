@@ -69,8 +69,6 @@ public class EmailAuthController {
             //DB에 있는 것이 확인되면 회원의 상태를 이메일인증(ST00120)으로 변경(update X -> insert 상태 추가)
             emailAuthService.changeUserStatus(userId);
         }
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .header("Location", "/")
-                .body("이메일인증이 완료되었습니다");
+        return ResponseEntity.ok().body("EmailAuth Confirm");
     }
 }
