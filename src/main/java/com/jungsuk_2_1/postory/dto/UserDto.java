@@ -14,6 +14,8 @@ import java.util.Date;
 public class UserDto {
     private String token; //토큰 정보
 
+    private String userStatus;
+
     private String userId; // 유저에게 고유하게 부여되는 uuid
 
     private String eid; // 아이디로 사용할 유저네임. 이메일일 수도 그냥 문자열일 수도 있다.
@@ -36,5 +38,4 @@ public class UserDto {
 
     private String authProvider; // 이후 OAuth에서 사용할 유저 정보 제공자 : github
 
-    private String prevUrl;
 }

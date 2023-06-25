@@ -1,7 +1,7 @@
 package com.jungsuk_2_1.postory.controller;
 
-import com.jungsuk_2_1.postory.dto.RedirectResponseDto;
-import com.jungsuk_2_1.postory.dto.StatusResponseDto;
+import com.jungsuk_2_1.postory.dto.HeaderDto;
+import com.jungsuk_2_1.postory.dto.ResponseDto;
 import com.jungsuk_2_1.postory.security.TokenProvider;
 import com.jungsuk_2_1.postory.dto.UserDto;
 import com.jungsuk_2_1.postory.service.UserServiceImpl;
@@ -12,8 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -35,17 +34,14 @@ public class UserController {
     public ResponseEntity<?> registerUser(@RequestBody UserDto userDto) {
         try {
             //요청받은 객체 유효성 검사
-            if (userDto == null) {
-                throw new RuntimeException("이메일/비밀번호/닉네임을 확인해주세요");
+            if (Objects.equals(userDto.getEid(), "")) {
+                throw new RuntimeException("Enter EMAIL");
             }
-            if (userDto.getPwd() == null) {
-                throw new RuntimeException("비밀번호를 입력해주세요");
+            if (Objects.equals(userDto.getPwd(), "")) {
+                throw new RuntimeException("Enter PWD");
             }
-            if (userDto.getEid() == null) {
-                throw new RuntimeException("이메일을 입력해주세요");
-            }
-            if (userDto.getNic() == null) {
-                throw new RuntimeException("닉네임을 입력해주세요");
+            if (Objects.equals(userDto.getNic(), "")) {
+                throw new RuntimeException("Enter NICKNAME");
             }
             //uuid 생성
             String uuid = UUID.randomUUID().toString().replace("-", "");
@@ -59,23 +55,18 @@ public class UserController {
                     .msgAlowYn(true) //메시지 허용여부의 Default를 true로 설정
                     .build();
 
-            //DB에 유저를 저장(생성)하는 create()메서드 호출(반환X, void)
+            //DB에 유저를 저장(생성)하는 create()메서드 호출(반환X, void), 유저 상태도 "신규"로 생성
             userServiceImpl.create(user);
             log.info("Signup Success");
-            //회원가입 후 로그인페이지로 리다이렉트 URI 보내가
-            RedirectResponseDto redirectResponseDto = RedirectResponseDto.builder()
-                    .status(HttpStatus.FOUND)
-                    .message("POSTORY 회원가입이 완료되었습니다.")
-                    .redirectUrl("/login")
-                    .build();
-            return ResponseEntity.ok().body(redirectResponseDto);
+            //회원가입 OK
+            return ResponseEntity.ok().body(null);
 
         } catch (Exception e) {
-            StatusResponseDto statusResponseDto = StatusResponseDto.builder()
-                    .message(e.getMessage())
-                    .status(HttpStatus.BAD_REQUEST)
+            e.printStackTrace();
+            ResponseDto responseDto = ResponseDto.builder()
+                    .errMsg(e.getMessage())
                     .build();
-            return ResponseEntity.ok().body(statusResponseDto);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
     }
 
@@ -97,32 +88,35 @@ public class UserController {
                 final String token = tokenProvider.create(user);
                 //로그인한 유저 상태 확인
                 String userStatus = userServiceImpl.checkUserStatus(user);
-                //유저의 상태가 신규=ST00110 이면 이메일 인증 페이지로 가라고 리다이렉트 URI 넘겨주기
+                //유저의 상태가 신규=ST00110
                 if (Objects.equals(userStatus, "ST00110")) {
-                    RedirectResponseDto redirectResponseDto = RedirectResponseDto.builder()
-                            .status(HttpStatus.FOUND)
-                            .redirectUrl("/login")
+                    HeaderDto newUser = HeaderDto.builder()
                             .token(token)
-                            .message("이메일 인증이 필요합니다")
+                            .userStatus("ST00110")
                             .build();
-                    return ResponseEntity.ok().body(redirectResponseDto);
+                    return ResponseEntity.ok().body(newUser);
                 }
-                //유저의 상태가 신규가 아니면(ST00120) 로그인 성공해서 이전 페이지로 돌려보내기
-                RedirectResponseDto redirectResponseDto = RedirectResponseDto.builder()
-                        .status(HttpStatus.FOUND)
-                        .redirectUrl(userDto.getPrevUrl())
-                        .token(token)
-                        .build();
-                return ResponseEntity.ok().body(redirectResponseDto);
-            } else {
-                throw new RuntimeException("입력하신 정보가 일치하지 않습니다");
+                //유저의 상태가 신규가 아님 =(ST00120) - 이메일인증 완료된 회원
+                if (Objects.equals(userStatus, "ST00120")) {
+                    HeaderDto emailAuthUser = HeaderDto.builder()
+                            .token(token)
+                            .userStatus("ST00120")
+                            .userImgPath(user.getUserImgPath())
+                            .nic(user.getNic())
+                            .chnlId("")
+                            .chnlTtl("")
+                            .chnlUrl("")
+                            .build();
+                    return ResponseEntity.ok().body(emailAuthUser);
+                }
             }
+            throw new RuntimeException("UNAUTHORIZED USER");
         } catch (Exception e) {
-            StatusResponseDto statusResponseDto = StatusResponseDto.builder()
-                    .message(e.getMessage())
-                    .status(HttpStatus.BAD_REQUEST)
+            e.printStackTrace();
+            ResponseDto responseDto = ResponseDto.builder()
+                    .errMsg(e.getMessage())
                     .build();
-            return ResponseEntity.ok().body(statusResponseDto);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseDto);
         }
     }
 }

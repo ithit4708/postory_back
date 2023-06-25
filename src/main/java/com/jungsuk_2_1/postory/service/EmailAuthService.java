@@ -8,8 +8,8 @@ import java.util.Map;
 
 public interface EmailAuthService {
     void sendSimpleMessage(EmailAuthDto emailAuthDto)throws Exception;
-    UserDto getUserByUserId(String userId);
-    Date getExpireTime(EmailAuthDto emailAuthDto);
-    Boolean compareCertiNo(Map<String,String> certinoCheckMap);
-    void changeUserStatus(String userId);
+    UserDto getUserByUserId(String userId) throws Exception;
+    Date getExpireTime(EmailAuthDto emailAuthDto) throws Exception;
+    Boolean compareCertiNo(Map<String,String> certinoCheckMap) throws Exception;
+    void changeUserStatus(String userId) throws Exception;
 }
