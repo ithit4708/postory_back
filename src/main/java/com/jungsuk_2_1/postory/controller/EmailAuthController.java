@@ -59,18 +59,16 @@ public class EmailAuthController {
     }
 
     @PostMapping("/confirm")
-    public ResponseEntity<?> emailConfirm(@AuthenticationPrincipal String userId, EmailAuthDto certino) {
+    public ResponseEntity<?> emailConfirm(@AuthenticationPrincipal String userId, EmailAuthDto certino) throws Exception {
         //토큰으로 확인한 유저의 uuid와 입력받은 인증번호를 이용해서 DB에 있는지 확인한다.
         //Dto 대신에
-        Map<String, String> certinoCheckMap = new HashMap();
+        Map<String, String> certinoCheckMap = new HashMap<>();
         certinoCheckMap.put("userId", userId);
         certinoCheckMap.put("certino", certino.getCertino());
         if (emailAuthService.compareCertiNo(certinoCheckMap)) {
             //DB에 있는 것이 확인되면 회원의 상태를 이메일인증(ST00120)으로 변경(update X -> insert 상태 추가)
             emailAuthService.changeUserStatus(userId);
         }
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .header("Location", "/")
-                .body("이메일인증이 완료되었습니다");
+        return ResponseEntity.ok().body("EmailAuth Confirm");
     }
 }
