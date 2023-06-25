@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jungsuk_2_1.postory.dao.PostDao">
+    <insert id="createPost">
+
+    </insert>
+
+    <select id="getPostsByChnlUri" parameterType="map" resultType="ChannelPostDto">
+        SELECT p.*, s.SER_TTL, cd.CD_NM as nowPostStusCdNm , u.NIC, tb.STYLE_TEXT
+        FROM post AS p
+        INNER JOIN channel AS c ON p.CHNL_ID = c.CHNL_ID
+        INNER JOIN common_code as cd ON p.NOW_POST_STUS_CD = cd.CD
+        LEFT JOIN series as s ON p.SER_ID = s.SER_ID
+        INNER JOIN user as u ON c.CRT_ID = u.USER_ID
+        LEFT JOIN block as b ON b.POST_ID = p.POST_ID
+        LEFT JOIN text_block as tb ON tb.BLK_ID = b.BLK_ID AND b.BLK_KIND_CD =
+        (SELECT CD FROM common_code WHERE CD_NM = '텍스트블록')
+        WHERE c.CHNL_URI = #{chnlUri}
+            <choose>
+                <when test="orderMethod == 'latest'">
+                    ORDER BY p.POST_PBLC_DTM DESC
+                </when>
+                <when test="orderMethod == 'popularity'">
+                    ORDER BY p.POST_LIK_CNT DESC
+                </when>
+            </choose>
+            LIMIT #{pageSize} OFFSET #{offset}
+        </select>
+</mapper>

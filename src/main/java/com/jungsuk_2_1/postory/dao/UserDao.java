@@ -1,5 +1,6 @@
 package com.jungsuk_2_1.postory.dao;
 
+import com.jungsuk_2_1.postory.dto.ChannelUserDto;
 import com.jungsuk_2_1.postory.dto.UserDto;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -11,4 +12,6 @@ public interface UserDao {
     void statusSave(String userId);
     String findStatusByUserId(String userId);
     UserDto findByUserId(String userId);
+    ChannelUserDto findByChnlUri(String channelUri);
+
 }

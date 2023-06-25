@@ -8,7 +8,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ResponseDto {
+public class ResponseDto<T> {
     private List<?> data;
     private String errMsg;
 }

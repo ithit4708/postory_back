@@ -27,4 +27,19 @@
     <select id="findByUserId" parameterType="String" resultType="UserDto">
         select user_id,eid from user where user_id = #{userId}
     </select>
+
+    <select id="findByChnlUri" resultType="ChannelUserDto">
+        SELECT
+            u.EID as eid,
+            u.NIC as nic,
+            u.USER_INTRO as userIntro,
+            u.USER_IMG_PATH as userImgPath,
+            u.MSG_ALOW_YN as msgAlowYn
+        FROM
+            user u
+                INNER JOIN
+            channel c ON u.USER_ID = c.CRT_ID
+        WHERE
+            c.CHNL_URI = #{chnlUri}
+    </select>
 </mapper>
