@@ -7,7 +7,9 @@
     </select>
 
     <select id="findByUserEmail" parameterType="String" resultType="UserDto">
-        SELECT * FROM user WHERE eid = #{eid};
+        SELECT *
+        FROM user
+        WHERE eid = #{eid};
     </select>
 
     <insert id="save" parameterType="UserDto">
@@ -16,34 +18,49 @@
     </insert>
 
     <insert id="statusSave" parameterType="UserDto">
-        insert into user_status (SNO,USER_ID, COMT, USER_STUS_CD, USER_STUS_UPD_DTM, USER_STUS_UPDR_ID)
-        values (1,#{userId},default,'ST00110',now(),#{userId})
+        insert into user_status (SNO, USER_ID, COMT, USER_STUS_CD, USER_STUS_UPD_DTM, USER_STUS_UPDR_ID)
+        values (1, #{userId}, default, 'ST00110', now(), #{userId})
     </insert>
 
     <select id="findStatusByUserId" parameterType="String" resultType="String">
-        select user_stus_cd from user_status where user_id = #{userId}
+        select user_stus_cd
+        from user_status
+        where user_id = #{userId}
+        order by USER_STUS_UPD_DTM DESC LIMIT 1
     </select>
 
     <select id="findByUserId" parameterType="String" resultType="UserDto">
-        select user_id,eid from user where user_id = #{userId}
+        select user_id, eid
+        from user
+        where user_id = #{userId}
     </select>
 
     <select id="findByChnlUri" resultType="ChannelUserDto">
-        SELECT
-            u.EID as eid,
-            u.NIC as nic,
-            u.USER_INTRO as userIntro,
-            u.USER_IMG_PATH as userImgPath,
-            u.MSG_ALOW_YN as msgAlowYn
-        FROM
-            user u
-                INNER JOIN
-            channel c ON u.USER_ID = c.CRT_ID
-        WHERE
-            c.CHNL_URI = #{chnlUri}
+        SELECT u.EID           as eid,
+               u.NIC           as nic,
+               u.USER_INTRO    as userIntro,
+               u.USER_IMG_PATH as userImgPath,
+               u.MSG_ALOW_YN   as msgAlowYn
+        FROM user u
+                 INNER JOIN
+             channel c ON u.USER_ID = c.CRT_ID
+        WHERE c.CHNL_URI = #{chnlUri}
     </select>
 
     <select id="existsByUserNic" parameterType="String" resultType="boolean">
         SELECT EXISTS(SELECT 1 FROM user WHERE nic = #{nic}) AS user_exists;
+    </select>
+
+    <select id="findHeaderInfoByUserId" parameterType="String" resultType="HeaderChannelDto">
+        select c.chnl_id, c.chnl_ttl, c.chnl_uri
+        from user u inner join channel c on u.user_id = c.crt_id
+        where u.user_id = #{userId}
+    </select>
+
+    <select id="findHeaderUserInfoByUserId" parameterType="String" resultType="HeaderUserDto">
+        select u.user_img_path, u.nic, s.user_stus_cd
+        from user u inner join user_status s on u.user_id = s.user_id
+        where u.user_id = #{userId}
+        order by s.USER_STUS_UPD_DTM DESC LIMIT 1
     </select>
 </mapper>
