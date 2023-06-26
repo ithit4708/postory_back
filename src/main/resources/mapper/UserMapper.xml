@@ -51,9 +51,16 @@
         SELECT EXISTS(SELECT 1 FROM user WHERE nic = #{nic}) AS user_exists;
     </select>
 
-    <select id="findHeaderInfoByUserId" parameterType="String" resultType="HeaderDto">
-        select u.user_img_path, u.nic, c.chnl_id, c.chnl_ttl, c.chnl_uri
+    <select id="findHeaderInfoByUserId" parameterType="String" resultType="HeaderChannelDto">
+        select c.chnl_id, c.chnl_ttl, c.chnl_uri
         from user u inner join channel c on u.user_id = c.crt_id
         where u.user_id = #{userId}
+    </select>
+
+    <select id="findHeaderUserInfoByUserId" parameterType="String" resultType="HeaderUserDto">
+        select u.user_img_path, u.nic, s.user_stus_cd
+        from user u inner join user_status s on u.user_id = s.user_id
+        where u.user_id = #{userId}
+        order by s.USER_STUS_UPD_DTM DESC LIMIT 1
     </select>
 </mapper>

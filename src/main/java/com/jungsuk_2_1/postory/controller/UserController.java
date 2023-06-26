@@ -1,11 +1,10 @@
 package com.jungsuk_2_1.postory.controller;
 
-import com.jungsuk_2_1.postory.dto.HeaderDto;
-import com.jungsuk_2_1.postory.dto.ResponseDto;
+import com.jungsuk_2_1.postory.dto.HeaderChannelDto;
+import com.jungsuk_2_1.postory.dto.HeaderUserDto;
 import com.jungsuk_2_1.postory.security.TokenProvider;
 import com.jungsuk_2_1.postory.dto.UserDto;
 import com.jungsuk_2_1.postory.service.UserService;
-import com.jungsuk_2_1.postory.service.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,10 +63,9 @@ public class UserController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            ResponseDto responseDto = ResponseDto.builder()
-                    .errMsg(e.getMessage())
-                    .build();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+            Map error = new HashMap();
+            error.put("errMsg",e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
     }
 
@@ -91,34 +89,40 @@ public class UserController {
                 String userStatus = userService.checkUserStatus(user);
                 //유저의 상태가 신규=ST00110
                 if (Objects.equals(userStatus, "ST00110")) {
-                    HeaderDto newUser = HeaderDto.builder()
-                            .token(token)git
-                            .userStatus("ST00110")
+                    HeaderUserDto newUser = HeaderUserDto.builder()
+                            .token(token)
+                            .status("ST00110")
                             .build();
                     return ResponseEntity.ok().body(newUser);
                 }
                 //유저의 상태가 신규가 아님 =(ST00120) - 이메일인증 완료된 회원
                 if (Objects.equals(userStatus, "ST00120")) {
-                    HeaderDto headerInfo = userService.getHeaderInfo(user.getUserId());
-                    HeaderDto emailAuthUser = HeaderDto.builder()
+                    //Map 형태로 반환하기 위해 HashMap생성
+                    Map<String,Object> headerMap = new HashMap<>();
+
+                    //user와 user_status를 join한 정보를 가져오기위한 HeaderUserDto 사용
+                    HeaderUserDto userInfo = userService.getHeaderUserInfo(user.getUserId());
+                    HeaderUserDto headerUserInfo = HeaderUserDto.builder()
                             .token(token)
-                            .userStatus("ST00120")
-                            .userImgPath(headerInfo.getUserImgPath())
-                            .nic(headerInfo.getNic())
-                            .chnlId(headerInfo.getChnlId())
-                            .chnlTtl(headerInfo.getChnlTtl())
-                            .chnlUri(headerInfo.getChnlUri())
-                            .build();
-                    return ResponseEntity.ok().body(emailAuthUser);
+                            .status(userInfo.getStatus())
+                            .userImgPath(userInfo.getUserImgPath())
+                            .nic(userInfo.getNic()).build();
+                    //user와 channel을 join한 정보와 소유한 channel을 모두 가져오기 위한 List 사용
+                    List<HeaderChannelDto> list = userService.getHeaderInfo(user.getUserId());
+
+                    //가져온 user 정보와 channel 정보를 map에 저장.
+                    headerMap.put("user",headerUserInfo);
+                    headerMap.put("channel",list);
+
+                    return ResponseEntity.ok().body(headerMap);
                 }
             }
             throw new RuntimeException("Login Failed");
         } catch (Exception e) {
             e.printStackTrace();
-            ResponseDto responseDto = ResponseDto.builder()
-                    .errMsg(e.getMessage())
-                    .build();
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseDto);
+            Map error = new HashMap();
+            error.put("errMsg",e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
         }
     }
 }

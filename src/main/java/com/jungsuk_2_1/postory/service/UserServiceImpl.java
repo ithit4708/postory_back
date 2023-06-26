@@ -1,11 +1,14 @@
 package com.jungsuk_2_1.postory.service;
 
-import com.jungsuk_2_1.postory.dto.HeaderDto;
+import com.jungsuk_2_1.postory.dto.HeaderChannelDto;
+import com.jungsuk_2_1.postory.dto.HeaderUserDto;
 import com.jungsuk_2_1.postory.dto.UserDto;
 import com.jungsuk_2_1.postory.dao.UserDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -69,7 +72,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public HeaderDto getHeaderInfo(String userId) {
+    public List<HeaderChannelDto> getHeaderInfo(String userId) {
         return userDao.findHeaderInfoByUserId(userId);
+    }
+
+    @Override
+    public HeaderUserDto getHeaderUserInfo(String userId) {
+        return userDao.findHeaderUserInfoByUserId(userId);
     }
 }
