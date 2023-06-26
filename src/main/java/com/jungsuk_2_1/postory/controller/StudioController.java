@@ -36,7 +36,7 @@ public class StudioController {
         }catch (Exception e){
             String error = e.getMessage();
 
-            ResponseDto<ChannelDto> response = ResponseDto.<ChannelDto>builder().error(error).build();
+            ResponseDto<ChannelDto> response = ResponseDto.<ChannelDto>builder().errMsg(error).build();
 
             return ResponseEntity.badRequest().body(response);
         }
