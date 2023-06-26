@@ -15,6 +15,6 @@ public class HeaderDto {
     private String userImgPath;
     private String nic;
     private String chnlId;
-    private String chnlUrl;
+    private String chnlUri;
     private String chnlTtl;
 }

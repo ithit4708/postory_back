@@ -4,6 +4,7 @@ import com.jungsuk_2_1.postory.dto.HeaderDto;
 import com.jungsuk_2_1.postory.dto.ResponseDto;
 import com.jungsuk_2_1.postory.security.TokenProvider;
 import com.jungsuk_2_1.postory.dto.UserDto;
+import com.jungsuk_2_1.postory.service.UserService;
 import com.jungsuk_2_1.postory.service.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,12 +19,12 @@ import java.util.*;
 @RestController
 @RequestMapping("/auth")
 public class UserController {
-    private UserServiceImpl userServiceImpl;
+    private UserService userService;
     private TokenProvider tokenProvider;
 
     //생성자로 객체 주입받는 방법(Autowired 생략 가능)
-    UserController(UserServiceImpl userServiceImpl, TokenProvider tokenProvider) {
-        this.userServiceImpl = userServiceImpl;
+    UserController(UserService userService, TokenProvider tokenProvider) {
+        this.userService = userService;
         this.tokenProvider = tokenProvider;
     }
 
@@ -56,7 +57,7 @@ public class UserController {
                     .build();
 
             //DB에 유저를 저장(생성)하는 create()메서드 호출(반환X, void), 유저 상태도 "신규"로 생성
-            userServiceImpl.create(user);
+            userService.create(user);
             log.info("Signup Success");
             //회원가입 OK
             return ResponseEntity.ok().body(null);
@@ -71,12 +72,12 @@ public class UserController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticate(@RequestBody UserDto userDto) {
+    public ResponseEntity<?> authenticate(@RequestBody UserDto userDto) throws Exception {
         //이미 로그인이 되어 있는 상태라면 다시 이전페이지로 리다이렉트 보내기
 
         //[유효성검사] 입력받은 이메일로 유저정보를 찾고, 그 유저정보에서 입력받은 비밀번호와 일치여부 확인.
         //확인된 유저를 객체로 반환. 일치안하면 null 반환
-        UserDto user = userServiceImpl.getByCredentials(
+        UserDto user = userService.getByCredentials(
                 userDto.getEid(),
                 userDto.getPwd(),
                 passwordEncoder); //서비스에 BCryptPasswordEncoder 객체를 넘겨주기
@@ -87,25 +88,26 @@ public class UserController {
                 //유저 개인의 JWT 토큰 생성
                 final String token = tokenProvider.create(user);
                 //로그인한 유저 상태 확인
-                String userStatus = userServiceImpl.checkUserStatus(user);
+                String userStatus = userService.checkUserStatus(user);
                 //유저의 상태가 신규=ST00110
                 if (Objects.equals(userStatus, "ST00110")) {
                     HeaderDto newUser = HeaderDto.builder()
-                            .token(token)
+                            .token(token)git
                             .userStatus("ST00110")
                             .build();
                     return ResponseEntity.ok().body(newUser);
                 }
                 //유저의 상태가 신규가 아님 =(ST00120) - 이메일인증 완료된 회원
                 if (Objects.equals(userStatus, "ST00120")) {
+                    HeaderDto headerInfo = userService.getHeaderInfo(user.getUserId());
                     HeaderDto emailAuthUser = HeaderDto.builder()
                             .token(token)
                             .userStatus("ST00120")
-                            .userImgPath(user.getUserImgPath())
-                            .nic(user.getNic())
-                            .chnlId("")
-                            .chnlTtl("")
-                            .chnlUrl("")
+                            .userImgPath(headerInfo.getUserImgPath())
+                            .nic(headerInfo.getNic())
+                            .chnlId(headerInfo.getChnlId())
+                            .chnlTtl(headerInfo.getChnlTtl())
+                            .chnlUri(headerInfo.getChnlUri())
                             .build();
                     return ResponseEntity.ok().body(emailAuthUser);
                 }

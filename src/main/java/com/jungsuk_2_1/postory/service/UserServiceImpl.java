@@ -1,5 +1,6 @@
 package com.jungsuk_2_1.postory.service;
 
+import com.jungsuk_2_1.postory.dto.HeaderDto;
 import com.jungsuk_2_1.postory.dto.UserDto;
 import com.jungsuk_2_1.postory.dao.UserDao;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private UserDao userDao;
+
     //생성자로 객체 주입받는 방법(Autowired 생략 가능)
     UserServiceImpl(UserDao userDao) {
         this.userDao = userDao;
@@ -60,8 +62,14 @@ public class UserServiceImpl implements UserService {
         }
         return null;
     }
+
     @Override
     public String checkUserStatus(UserDto userDto) {
         return userDao.findStatusByUserId(userDto.getUserId());
+    }
+
+    @Override
+    public HeaderDto getHeaderInfo(String userId) {
+        return userDao.findHeaderInfoByUserId(userId);
     }
 }
