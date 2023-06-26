@@ -9,6 +9,6 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 public class ResponseDto<T> {
-    private List<?> data;
+    private List<T> data;
     private String errMsg;
 }
