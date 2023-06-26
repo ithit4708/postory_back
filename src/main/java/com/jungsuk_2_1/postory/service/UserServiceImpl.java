@@ -25,11 +25,17 @@ public class UserServiceImpl implements UserService {
         }
         //유저 객체 정보의 EmailId를 꺼내서 문자열로 저장
         final String userEmail = userDto.getEid();
+        final String userNic = userDto.getNic();
 
         //요청받은 emailId가 DB에 있는지 중복을 확인하기 위해 Dao의 메서드를 호출 -> mapper에서 SQL쿼리 실행
         if (userDao.existsByUserEmail(userEmail)) {
             log.warn("userEmail already exists {}", userEmail);
-            throw new RuntimeException("Username already exists");
+            throw new RuntimeException("UserEmail already exists");
+        }
+        //요청으로 받은 닉네임이 DB에 있는 중복을 확인
+        if (userDao.existsByUserNic(userNic)) {
+            log.warn("userNic already exists {}", userNic);
+            throw new RuntimeException("UserNic already exists");
         }
 
         //DB에 중복되는 ID가 없으면 DB에 저장하는 Dao의 메서드를 호출 -> mapper에서 SQL쿼리 실행

@@ -17,7 +17,7 @@
 
     <insert id="statusSave" parameterType="UserDto">
         insert into user_status (SNO,USER_ID, COMT, USER_STUS_CD, USER_STUS_UPD_DTM, USER_STUS_UPDR_ID)
-        values (1,#{userId},default,'ST00110',now(),'5dfad5bd23a94bb49099ee3cc9117a63')
+        values (1,#{userId},default,'ST00110',now(),#{userId})
     </insert>
 
     <select id="findStatusByUserId" parameterType="String" resultType="String">
@@ -41,5 +41,9 @@
             channel c ON u.USER_ID = c.CRT_ID
         WHERE
             c.CHNL_URI = #{chnlUri}
+    </select>
+
+    <select id="existsByUserNic" parameterType="String" resultType="boolean">
+        SELECT EXISTS(SELECT 1 FROM user WHERE nic = #{nic}) AS user_exists;
     </select>
 </mapper>

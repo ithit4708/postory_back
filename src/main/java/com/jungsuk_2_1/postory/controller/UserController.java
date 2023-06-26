@@ -110,7 +110,7 @@ public class UserController {
                     return ResponseEntity.ok().body(emailAuthUser);
                 }
             }
-            throw new RuntimeException("UNAUTHORIZED USER");
+            throw new RuntimeException("Login Failed");
         } catch (Exception e) {
             e.printStackTrace();
             ResponseDto responseDto = ResponseDto.builder()

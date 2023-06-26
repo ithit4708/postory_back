@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 public interface UserDao {
     UserDto findByUserEmail(String eId);
     Boolean existsByUserEmail(String eId);
+    Boolean existsByUserNic(String nic);
     void save(UserDto userDto);
     void statusSave(String userId);
     String findStatusByUserId(String userId);
