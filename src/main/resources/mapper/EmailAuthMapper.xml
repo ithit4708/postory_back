@@ -3,8 +3,8 @@
 
 <mapper namespace="com.jungsuk_2_1.postory.dao.EmailAuthDao">
     <insert id="save" parameterType="EmailAuthDto">
-        insert into email (email_id,user_id,expi_dtm,email,certino)
-        values (#{emailId},#{userId},DATE_ADD(NOW(), INTERVAL 3.5 MINUTE),#{email},#{certino})
+        insert into email (user_id,expi_dtm,email,certino)
+        values (#{userId},DATE_ADD(NOW(), INTERVAL 3.5 MINUTE),#{email},#{certino})
     </insert>
 
     <select id="findExpireTimeByUser" parameterType="EmailAuthDto" resultType="Date">
@@ -16,7 +16,7 @@
     </select>
 
     <insert id="addUserStatus" parameterType="String">
-        insert into user_status (SNO,USER_ID, COMT, USER_STUS_CD, USER_STUS_UPD_DTM, USER_STUS_UPDR_ID)
-        values (2,#{userId},default,'ST00120',now(),'cea3e368d10042fe81134c6b8bf83b3d')
+        insert into user_status (SNO,USER_ID, USER_STUS_CD, USER_STUS_UPD_DTM, USER_STUS_UPDR_ID)
+        values (2,#{userId},'ST00120',now(),#{userId})
     </insert>
 </mapper>

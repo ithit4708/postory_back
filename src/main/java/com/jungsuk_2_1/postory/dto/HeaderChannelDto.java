@@ -9,12 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class HeaderDto {
-    private String token;
-    private String userStatus;
-    private String userImgPath;
-    private String nic;
+public class HeaderChannelDto {
     private String chnlId;
-    private String chnlUrl;
+    private String chnlUri;
     private String chnlTtl;
 }

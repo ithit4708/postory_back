@@ -8,10 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -59,15 +56,22 @@ public class EmailAuthController {
     }
 
     @PostMapping("/confirm")
-    public ResponseEntity<?> emailConfirm(@AuthenticationPrincipal String userId, EmailAuthDto certino) throws Exception {
+    public ResponseEntity<?> emailConfirm(@AuthenticationPrincipal String userId, @RequestBody EmailAuthDto certino) throws Exception {
         //토큰으로 확인한 유저의 uuid와 입력받은 인증번호를 이용해서 DB에 있는지 확인한다.
         //Dto 대신에
-        Map<String, String> certinoCheckMap = new HashMap<>();
-        certinoCheckMap.put("userId", userId);
-        certinoCheckMap.put("certino", certino.getCertino());
-        if (emailAuthService.compareCertiNo(certinoCheckMap)) {
-            //DB에 있는 것이 확인되면 회원의 상태를 이메일인증(ST00120)으로 변경(update X -> insert 상태 추가)
-            emailAuthService.changeUserStatus(userId);
+        try {
+            Map<String, String> certinoCheckMap = new HashMap<>();
+            certinoCheckMap.put("userId", userId);
+            certinoCheckMap.put("certino", certino.getCertino());
+            if (emailAuthService.compareCertiNo(certinoCheckMap)) {
+                //DB에 있는 것이 확인되면 회원의 상태를 이메일인증(ST00120)으로 변경(update X -> insert 상태 추가)
+                emailAuthService.changeUserStatus(userId);
+            } else {
+                throw new RuntimeException("User Status Change Fail");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
         return ResponseEntity.ok().body("EmailAuth Confirm");
     }

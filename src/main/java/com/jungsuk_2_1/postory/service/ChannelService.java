@@ -37,13 +37,13 @@ public class ChannelService {
         //밖에서 하는 것이 성능이 더 좋을 것 같다. 하지만 포스타입은 안에서 함.
         checkDuplicate(channel);
 
-//       채널이 40개면 더이상 못 만듦.
+//       채널이 3개면 더이상 못 만듦.
 
         int count = channelDao.countUserChannels(channel.getCrtId());
 
-        if (count > 40) {
-            log.warn("Channel cannot be more than 40");
-            throw new RuntimeException("Channel cannot be more than 40");
+        if (count > 3) {
+            log.warn("Channel cannot be more than 3");
+            throw new RuntimeException("Channel cannot be more than 3");
         } else {
             int newChnlId = channelDao.findLastId() + 1;
             channel.setChnlId(newChnlId);
@@ -84,7 +84,7 @@ public class ChannelService {
 //            mapper에서 처리하는 게 더 안전해 보임.
                 channelDao.delete(dto);
         } catch (Exception e) {
-            log.error("error deleting dto ", dto.getChnlId(), e);
+            log.error("error deleting dto {}", dto.getChnlId(), e);
             throw new RuntimeException("error deleting dto " + dto.getCrtId());
         }
         return channelDao.findByUserId(dto.getCrtId());
