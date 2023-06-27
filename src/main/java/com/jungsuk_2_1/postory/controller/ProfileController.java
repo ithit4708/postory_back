@@ -30,6 +30,7 @@ public class ProfileController {
         Map<String, Object> userChannelMap = new HashMap<>();
         //Profile에 필요한 User 정보만 가져오는 ProfileUserDto에 정보 담기
         ProfileUserDto userInfo = profileService.getProfileUser(nic);
+
         //user와 channel을 join한 정보와 소유한 channel을 모두 가져오기 위한 List 사용
         List<ProfileChannelDto> list = profileService.getProfileChannel(user.getUserId());
 
@@ -50,6 +51,7 @@ public class ProfileController {
             Map<String, Object> userPostsMap = new HashMap<>();
             //Profile에 필요한 User 정보만 가져오는 ProfileUserDto에 정보 담기
             ProfileUserDto userInfo = profileService.getProfileUser(nic);
+
             //user와 post를 join한 정보와 소유한 모든 포스트를 가져오기 위한 List 사용
             List<ProfilePostsDto> list = profileService.getProfilePosts(user.getUserId());
 
@@ -61,11 +63,28 @@ public class ProfileController {
             return ResponseEntity.ok().body(e.getMessage());
         }
     }
-//
-//    @GetMapping("/series")
-//    public ResponseEntity<?> retrieveProfileSeries(@PathVariable(required = true) String nic, @RequestParam int page,
-//                                                   @AuthenticationPrincipal String userId) {
-//
-//    }
+
+    @GetMapping("/series")
+    public ResponseEntity<?> retrieveProfileSeries(@PathVariable(required = true) String nic, @RequestParam(required = false) Integer page,
+                                                   @AuthenticationPrincipal String userId) {
+        try {
+            //PathVariable로 넘어온 유저의 nic을 받아와서 DB에서 해당하는 유저의 정보 찾기.
+            UserDto user = profileService.getUserByNickname(nic);
+            //응답 형태 : Map
+            Map<String, Object> userSeriseMap = new HashMap<>();
+            //Profile에 필요한 User 정보만 가져오는 ProfileUserDto에 정보 담기
+            ProfileUserDto userInfo = profileService.getProfileUser(nic);
+
+            //user와 post를 join한 정보와 소유한 모든 포스트를 가져오기 위한 List 사용
+            List<ProfileSeriseDto> list = profileService.getProfileSerise(user.getUserId());
+
+            userSeriseMap.put("user",userInfo);
+            userSeriseMap.put("serise",list);
+
+            return ResponseEntity.ok().body(userSeriseMap);
+        } catch (Exception e) {
+            return ResponseEntity.ok().body(e.getMessage());
+        }
+    }
 
 }

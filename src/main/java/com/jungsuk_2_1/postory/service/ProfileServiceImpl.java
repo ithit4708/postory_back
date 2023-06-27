@@ -1,10 +1,7 @@
 package com.jungsuk_2_1.postory.service;
 
 import com.jungsuk_2_1.postory.dao.ProfileDao;
-import com.jungsuk_2_1.postory.dto.ProfileChannelDto;
-import com.jungsuk_2_1.postory.dto.ProfilePostsDto;
-import com.jungsuk_2_1.postory.dto.ProfileUserDto;
-import com.jungsuk_2_1.postory.dto.UserDto;
+import com.jungsuk_2_1.postory.dto.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,5 +32,10 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public List<ProfilePostsDto> getProfilePosts(String userId) {
         return profileDao.findProfilePostsByUserId(userId);
+    }
+
+    @Override
+    public List<ProfileSeriseDto> getProfileSerise(String userId) {
+        return profileDao.findProfileSeriesByUserId(userId);
     }
 }

@@ -1,9 +1,6 @@
 package com.jungsuk_2_1.postory.service;
 
-import com.jungsuk_2_1.postory.dto.ProfileChannelDto;
-import com.jungsuk_2_1.postory.dto.ProfilePostsDto;
-import com.jungsuk_2_1.postory.dto.ProfileUserDto;
-import com.jungsuk_2_1.postory.dto.UserDto;
+import com.jungsuk_2_1.postory.dto.*;
 
 import java.util.List;
 
@@ -15,4 +12,5 @@ public interface ProfileService {
     ProfileUserDto getProfileUser(String nic);
 
     List<ProfilePostsDto> getProfilePosts(String userId);
+    List<ProfileSeriseDto> getProfileSerise(String userId);
 }
