@@ -63,4 +63,9 @@
         where u.user_id = #{userId}
         order by s.USER_STUS_UPD_DTM DESC LIMIT 1
     </select>
+
+    <insert id="emailAuthSave" parameterType="UserDto">
+        INSERT INTO email (USER_ID, EXPI_DTM, EMAIL, CERTINO)
+        VALUES (#{userId},now(),#{eid},'')
+    </insert>
 </mapper>

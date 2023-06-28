@@ -12,7 +12,6 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmailAuthDto {
-    private String emailId;
     private String userId;
     private Date expiDtm;
     private String email;

@@ -64,15 +64,9 @@ public class EmailAuthServiceImpl implements EmailAuthService {
         try {//예외처리
             //이메일을 보내고
             emailSender.send(message);
-            //인증번호를 dto 객체에 저장해서
-            EmailAuthDto user = EmailAuthDto.builder()
-                    .emailId(emailAuthDto.getEmailId())
-                    .userId(emailAuthDto.getUserId())
-                    .email(emailAuthDto.getEmail())
-                    .certino(emailAuthDto.getCertino()) //인증번호
-                    .build();
-            //인증번호를 DB에 저장한다.
-            emailAuthDao.save(user);
+
+            //인증번호 레코드를 DB에 업데이트.
+            emailAuthDao.updateEmailAuth(emailAuthDto);
         } catch (MailException es) {
             es.printStackTrace();
             throw new IllegalArgumentException();
@@ -95,7 +89,18 @@ public class EmailAuthServiceImpl implements EmailAuthService {
     }
 
     @Override
-    public void changeUserStatus(String userId) {
-        emailAuthDao.addUserStatus(userId);
+    public void changeUserStatus(EmailAuthDto userInfo) throws Exception {
+        emailAuthDao.addUserStatus(userInfo.getUserId());
+
+    }
+    @Override
+    public void changeUserEmail(EmailAuthDto userInfo) throws Exception {
+        emailAuthDao.changeUserEmail(userInfo);
+
+    }
+    @Override
+    public Boolean CheckExistsEid(String eid) {
+
+        return userDao.existsByUserEmail(eid);
     }
 }
