@@ -35,13 +35,13 @@ public class UserController {
         try {
             //요청받은 객체 유효성 검사
             if (Objects.equals(userDto.getEid(), "")) {
-                throw new RuntimeException("Enter EMAIL");
+                throw new RuntimeException("이메일을 입력해주세요");
             }
             if (Objects.equals(userDto.getPwd(), "")) {
-                throw new RuntimeException("Enter PWD");
+                throw new RuntimeException("비밀번호를 입력해주세요");
             }
             if (Objects.equals(userDto.getNic(), "")) {
-                throw new RuntimeException("Enter NICKNAME");
+                throw new RuntimeException("닉네임을 입력해주세요");
             }
             //uuid 생성
             String uuid = UUID.randomUUID().toString().replace("-", "");
@@ -63,8 +63,8 @@ public class UserController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            Map error = new HashMap();
-            error.put("errMsg",e.getMessage());
+            Map<String, String> error = new HashMap<>();
+            error.put("errMsg", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
     }
@@ -87,41 +87,43 @@ public class UserController {
                 final String token = tokenProvider.create(user);
                 //로그인한 유저 상태 확인
                 String userStatus = userService.checkUserStatus(user);
+
                 //유저의 상태가 신규=ST00110
                 if (Objects.equals(userStatus, "ST00110")) {
                     HeaderUserDto newUser = HeaderUserDto.builder()
                             .token(token)
-                            .status("ST00110")
+                            .userStusCd(userStatus)
                             .build();
                     return ResponseEntity.ok().body(newUser);
                 }
                 //유저의 상태가 신규가 아님 =(ST00120) - 이메일인증 완료된 회원
                 if (Objects.equals(userStatus, "ST00120")) {
+                    //로그인 후 헤더정보에 필요한 정보를 담기위한 HeaderUserDto userInfo 생성
+                    HeaderUserDto userInfo = userService.getHeaderUserInfo(user.getUserId());
                     //Map 형태로 반환하기 위해 HashMap생성
-                    Map<String,Object> headerMap = new HashMap<>();
+                    Map<String, Object> headerMap = new HashMap<>();
 
                     //user와 user_status를 join한 정보를 가져오기위한 HeaderUserDto 사용
-                    HeaderUserDto userInfo = userService.getHeaderUserInfo(user.getUserId());
                     HeaderUserDto headerUserInfo = HeaderUserDto.builder()
                             .token(token)
-                            .status(userInfo.getStatus())
+                            .userStusCd(userInfo.getUserStusCd())
                             .userImgPath(userInfo.getUserImgPath())
                             .nic(userInfo.getNic()).build();
                     //user와 channel을 join한 정보와 소유한 channel을 모두 가져오기 위한 List 사용
                     List<HeaderChannelDto> list = userService.getHeaderInfo(user.getUserId());
 
                     //가져온 user 정보와 channel 정보를 map에 저장.
-                    headerMap.put("user",headerUserInfo);
-                    headerMap.put("channel",list);
+                    headerMap.put("user", headerUserInfo);
+                    headerMap.put("channel", list);
 
                     return ResponseEntity.ok().body(headerMap);
                 }
             }
-            throw new RuntimeException("Login Failed");
+            throw new RuntimeException("올바른 이메일/비밀번호를 입력해주세요");
         } catch (Exception e) {
             e.printStackTrace();
-            Map error = new HashMap();
-            error.put("errMsg",e.getMessage());
+            Map<String, String> error = new HashMap<>();
+            error.put("errMsg", e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
         }
     }

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jungsuk_2_1.postory.dao.ProfileDao">
+    <select id="findUserByNickname" parameterType="String" resultType="UserDto">
+        SELECT *
+        FROM user
+        WHERE nic = #{nic};
+    </select>
+
+    <select id="findProfileUserByNic" parameterType="String" resultType="ProfileUserDto">
+        SELECT *
+        FROM user
+        WHERE nic = #{nic};
+    </select>
+
+    <select id="findProfileChannelByNic" parameterType="String" resultType="ProfileChannelDto">
+        SELECT c.chnl_img_path, c.chnl_ttl, c.suber_cnt, c.chnl_intro, c.chnl_uri
+        FROM user u
+                 LEFT JOIN channel c
+                           ON u.user_id = c.crt_id
+        WHERE u.user_id = #{user_id};
+    </select>
+
+    <select id="findProfilePostsByUserId" parameterType="String" resultType="ProfilePostsDto">
+        SELECT s.SER_TTL, p.POST_TTL, p.POST_SB_TTL,p.POST_REP_CNT, p.POST_INQR_CNT, p.POST_LIK_CNT, p.POST_PBLC_DTM, p.POST_THUMN_PATH
+        FROM (SELECT p.POST_TTL, p.POST_SB_TTL,p.POST_REP_CNT, p.POST_INQR_CNT, p.POST_LIK_CNT, p.POST_PBLC_DTM, p.POST_THUMN_PATH, p.SER_ID
+              FROM post p
+                       LEFT JOIN channel c ON p.CHNL_ID = c.CHNL_ID
+              WHERE c.CRT_ID = #{userId}) p
+                 LEFT JOIN series s ON p.SER_ID = s.SER_ID
+        ORDER BY p.POST_PBLC_DTM DESC;
+    </select>
+
+    <select id="findProfileSeriesByUserId" parameterType="String" resultType="ProfilePostsDto">
+        SELECT s.ser_thumn_path, s.ser_ttl, s.ser_desc, s.ser_inqr_cnt, s.ser_lik_cnt, s.ser_rep_cnt, s.ser_post_cnt
+              FROM series s
+                       LEFT JOIN channel c on s.chnl_id = c.chnl_id
+              where c.crt_id = #{userId}
+        ORDER BY s.ser_open_dtm DESC;
+    </select>
+</mapper>
