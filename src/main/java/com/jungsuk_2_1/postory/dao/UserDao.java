@@ -15,6 +15,7 @@ public interface UserDao {
     Boolean existsByUserNic(String nic);
     void save(UserDto userDto);
     void statusSave(String userId);
+    void emailAuthSave(UserDto user);
     String findStatusByUserId(String userId);
     UserDto findByUserId(String userId);
     ChannelUserDto findByChnlUri(String channelUri);

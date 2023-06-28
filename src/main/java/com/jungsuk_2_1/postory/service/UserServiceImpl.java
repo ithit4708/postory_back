@@ -48,6 +48,9 @@ public class UserServiceImpl implements UserService {
 
         //유저 상태코드를 신규(ST00110)로 DB에 저장
         userDao.statusSave(userDto.getUserId());
+
+        //유저 이메일 인증 정보에 Default 값 저장
+        userDao.emailAuthSave(userDto);
     }
 
     @Override
