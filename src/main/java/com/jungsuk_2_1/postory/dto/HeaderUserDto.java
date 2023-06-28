@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class HeaderUserDto {
     private String token;
+    private String eid;
     private String userStusCd;
     private String userImgPath;
     private String nic;
