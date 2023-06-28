@@ -71,15 +71,12 @@ public class UserController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticate(@RequestBody UserDto userDto) throws Exception {
-        //이미 로그인이 되어 있는 상태라면 다시 이전페이지로 리다이렉트 보내기
-
         //[유효성검사] 입력받은 이메일로 유저정보를 찾고, 그 유저정보에서 입력받은 비밀번호와 일치여부 확인.
         //확인된 유저를 객체로 반환. 일치안하면 null 반환
         UserDto user = userService.getByCredentials(
                 userDto.getEid(),
                 userDto.getPwd(),
                 passwordEncoder); //서비스에 BCryptPasswordEncoder 객체를 넘겨주기
-
         try {
             if (user != null) {
                 //로그인에
@@ -95,7 +92,9 @@ public class UserController {
                             .eid(user.getEid())
                             .userStusCd(userStatus)
                             .build();
-                    return ResponseEntity.ok().body(newUser);
+                    Map<String, Object> newUserMap = new HashMap<>();
+                    newUserMap.put("user", newUser);
+                    return ResponseEntity.ok().body(newUserMap);
                 }
                 //유저의 상태가 신규가 아님 =(ST00120) - 이메일인증 완료된 회원
                 if (Objects.equals(userStatus, "ST00120")) {
@@ -119,13 +118,15 @@ public class UserController {
 
                     return ResponseEntity.ok().body(headerMap);
                 }
+            } else {
+                throw new RuntimeException("올바른 이메일/비밀번호를 입력해주세요");
             }
-            throw new RuntimeException("올바른 이메일/비밀번호를 입력해주세요");
         } catch (Exception e) {
             e.printStackTrace();
             Map<String, String> error = new HashMap<>();
             error.put("errMsg", e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
         }
+        return null;
     }
 }

@@ -11,5 +11,7 @@ public interface EmailAuthService {
     UserDto getUserByUserId(String userId) throws Exception;
     Date getExpireTime(EmailAuthDto emailAuthDto) throws Exception;
     Boolean compareCertiNo(Map<String,String> certinoCheckMap) throws Exception;
-    void changeUserStatus(String userId) throws Exception;
+    void changeUserStatus(EmailAuthDto userInfo) throws Exception;
+    void changeUserEmail(EmailAuthDto userInfo) throws Exception;
+    Boolean CheckExistsEid(String eid);
 }

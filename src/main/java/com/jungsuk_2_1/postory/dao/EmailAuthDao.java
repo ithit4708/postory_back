@@ -8,8 +8,9 @@ import java.util.Map;
 
 @Mapper
 public interface EmailAuthDao {
-    void save(EmailAuthDto emailAuthDto);
+    void updateEmailAuth(EmailAuthDto emailAuthDto);
     Date findExpireTimeByUser(EmailAuthDto emailAuthDto);
     Boolean existsByUserIdAndCertino(Map<String, String> certino);
     void addUserStatus(String userId);
+    void changeUserEmail(EmailAuthDto userInfo);
 }
