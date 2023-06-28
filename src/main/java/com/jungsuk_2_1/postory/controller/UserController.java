@@ -92,6 +92,7 @@ public class UserController {
                 if (Objects.equals(userStatus, "ST00110")) {
                     HeaderUserDto newUser = HeaderUserDto.builder()
                             .token(token)
+                            .eid(user.getEid())
                             .userStusCd(userStatus)
                             .build();
                     return ResponseEntity.ok().body(newUser);
