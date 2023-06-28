@@ -12,11 +12,13 @@ import java.util.Map;
 public interface PostDao {
 
     List<ChannelPostDto> getPostsByChnlUri(Map<String, Object> params);
-    List<PostDto> createPost(Map<String, Object> params);
-    int findLastId();
-    int findInSeries(Map<String, Object> params);
-    int findInNonSeries();
+    void createPost(Map<String, Object> params);
+    Integer findLastId();
+    Integer findInSeries(Map<String, Object> params);
+    Integer findInNonSeries();
     StudioPostDto findInStudioByChnlUri(String chnlUri);
 
     void updateNextPostId(Map<String,Object> params);
+
+    StudioPostDto findById(Integer postId);
 }

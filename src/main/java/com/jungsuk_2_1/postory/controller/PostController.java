@@ -25,11 +25,16 @@ public class PostController {
         this.postService = postService;
     }
     @PostMapping("/create")
-    ResponseEntity<?> createPost(@RequestBody PostDto postDto){
+    ResponseEntity<?> createPost(@AuthenticationPrincipal String userId, @RequestBody PostDto postDto){
 
         try {
-            StudioPostDto studioPostDto = postService.createPost(postDto);
-            return ResponseEntity.ok().body(studioPostDto);
+            StudioPostDto studioPostDto = postService.createPost(userId,postDto);
+
+            Map<String, StudioPostDto> data = new HashMap();
+            data.put("data",studioPostDto);
+
+
+            return ResponseEntity.ok().body(data);
         }catch (Exception e){
             Map error = new HashMap();
             error.put("errMsg",e.getMessage());

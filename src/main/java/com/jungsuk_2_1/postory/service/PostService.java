@@ -29,10 +29,10 @@ public class PostService {
     this.postDao = postDao;
     this.seriesDao = seriesDao;
   }
-  public StudioPostDto createPost(PostDto postDto) {
+  public StudioPostDto createPost(String userId,PostDto postDto) {
 
-    int newPostId = postDao.findLastId() + 1;
-    int befPostId;
+    Integer newPostId = postDao.findLastId() + 1;
+    Integer befPostId;
 
     befPostId = getMaxPostIdinSer(postDto.getChnlUri(),postDto.getSerId());
 
@@ -43,18 +43,21 @@ public class PostService {
     params.put("postSbTtl", postDto.getPostSbTtl());
     params.put("postPchrgYn", postDto.getPostPchrgYn());
     params.put("postThumnPath", postDto.getPostThumnPath());
-    params.put("postSerId", postDto.getSerId());
+    params.put("serId", postDto.getSerId());
     params.put("pchrgBlkPurcPnt", postDto.getPchrgBlkPurcPnt());
     params.put("ntceSettYn", postDto.getNtceSettYn());
     params.put("adoYn", postDto.getAdoYn());
     params.put("chnlId", postDto.getChnlId());
     params.put("chnlUri", postDto.getChnlUri());
-    params.put("basicFontCd", postDto.getBasicFontCd());
-    params.put("basicParagAlgnCd", postDto.getBasicParagAlgnCd());
+//    params.put("basicFontCd", postDto.getBasicFontCd());
+//    params.put("basicParagAlgnCd", postDto.getBasicParagAlgnCd());
+    params.put("basicFontCdNm",postDto.getBasicFontCdNm());
+    params.put("basicParagAlgnCdNm", postDto.getBasicParagAlgnCdNm());
     params.put("itdYn", postDto.getItdYn());
     params.put("paragGapMargYn", postDto.getParagGapMargYn());
-    params.put("nowPostStusCd", postDto.getNowPostStusCd());
-    params.put("nowPostStusChgrId", postDto.getNowPostStusChgrId());
+//    params.put("nowPostStusCd", postDto.getNowPostStusCd());
+    params.put("nowPostStusCdNm", postDto.getNowPostStusCdNm());
+    params.put("nowPostStusChgrId", userId);
     params.put("befPostId", befPostId);
     params.put("nextPostId", null);
 
@@ -65,7 +68,7 @@ public class PostService {
     args.put("nextPostId", postDao.findLastId());
     postDao.updateNextPostId(args);
 
-    return getPostsInStudio(postDto.getChnlUri());
+    return postDao.findById(newPostId);
   }
 
   public List<ChannelPostDto> getPostsByChnlUri(String chnlUri, int page, String orderMethod, int pageSize) {
@@ -80,12 +83,12 @@ public class PostService {
     return postDao.getPostsByChnlUri(params);
   }
 
-  public StudioPostDto getPostsInStudio(String chnlUri){
+  public StudioPostDto getPostInStudio(String chnlUri){
 
     return postDao.findInStudioByChnlUri(chnlUri);
   }
 
-  private int getMaxPostIdinSer(String chnlUri, int serId) {
+  private int getMaxPostIdinSer(String chnlUri, Integer serId) {
     Map<String, Object> params = new HashMap<>();
     params.put("chnlUri", chnlUri);
     params.put("serId", serId);

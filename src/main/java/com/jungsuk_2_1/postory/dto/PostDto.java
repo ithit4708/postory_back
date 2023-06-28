@@ -58,22 +58,12 @@ public class PostDto {
     /* CHNL_ID */
     private Integer chnlId;
 
-    /* BASIC_FONT_CD */
-    private Object basicFontCd;
-
-    /* BASIC_PARAG_ALGN_CD */
-    private Object basicParagAlgnCd;
-
     /* ITD_YN */
     private Object itdYn;
 
     /* PARAG_GAP_MARG_YN */
     private Object paragGapMargYn;
 
-    /* NOW_POST_STUS_CD */
-    private Object nowPostStusCd;
-
-    /* NOW_POST_STUD_CHG_DTM */
     private String nowPostStudChgDtm;
 
     /* NOW_POST_STUS_CHGR_ID */
@@ -86,4 +76,10 @@ public class PostDto {
     private Integer nextPostId;
 
     private String chnlUri;
+
+    private String basicFontCdNm;
+
+    private String basicParagAlgnCdNm;
+
+    private String nowPostStusCdNm;
 }

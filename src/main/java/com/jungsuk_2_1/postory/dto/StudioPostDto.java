@@ -17,7 +17,6 @@ public class StudioPostDto {
     private Integer postRepCnt;
 
     private Integer postLikCnt;
-
     private Object postPchrgYn;
 
     private String postThumnPath;
@@ -29,12 +28,8 @@ public class StudioPostDto {
     private String postPblcDtm;
 
     private Integer chnlId;
-
-    private Object nowPostStusCd;
-
     private String nowPostStudChgDtm;
-
     private String serTtl;
     private String userNic;
-    private String nowPostStusNm;
+    private String nowPostStusCdNm;
 }
