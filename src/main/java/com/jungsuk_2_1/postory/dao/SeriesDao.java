@@ -12,6 +12,8 @@ import java.util.Map;
 public interface SeriesDao {
     public List<ChannelSeriesDto> findByChnlUri(Map<String, Object> params);
     void createSeries(Map<String, Object> params);
-    int findLastId();
+    Integer findLastId();
     StudioSeriesDto findInStudioByChnlUri(String chnlUri);
+
+    StudioSeriesDto findById(Integer serId);
 }

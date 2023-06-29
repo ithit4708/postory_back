@@ -108,5 +108,4 @@
                  LEFT JOIN series as s ON p.SER_ID = s.SER_ID
         WHERE p.POST_ID = #{postId};
     </select>
-
 </mapper>
