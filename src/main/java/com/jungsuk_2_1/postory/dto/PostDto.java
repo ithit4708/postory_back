@@ -48,7 +48,6 @@ public class PostDto {
 
     /* NTCE_SETT_YN */
     private Object ntceSettYn;
-
     /* ADO_YN */
     private Object adoYn;
 
