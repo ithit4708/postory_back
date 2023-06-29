@@ -2,9 +2,27 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.jungsuk_2_1.postory.dao.PostDao">
-    <insert id="createPost">
 
+    <insert id="createPost" parameterType="map">
+        INSERT INTO post (POST_ID, POST_TTL, POST_SB_TTL, POST_PCHRG_YN,
+                          POST_THUMN_PATH, SER_ID, PCHRG_BLK_PURC_PNT, NTCE_SETT_YN, ADO_YN, CHNL_ID,
+                          BASIC_FONT_CD, BASIC_PARAG_ALGN_CD, ITD_YN, PARAG_GAP_MARG_YN, NOW_POST_STUS_CD,
+                          NOW_POST_STUS_CHGR_ID, BEF_POST_ID, NEXT_POST_ID)
+        SELECT #{postId}, #{postTtl}, #{postSbTtl}, #{postPchrgYn},
+               #{postThumnPath}, #{serId}, #{pchrgBlkPurcPnt}, #{ntceSettYn}, #{adoYn}, (SELECT CHNL_ID FROM channel WHERE CHNL_URI = #{chnlUri}),
+               (SELECT CD FROM common_code WHERE CD_NM = #{basicFontCdNm}),
+               (SELECT CD FROM common_code WHERE CD_NM = #{basicParagAlgnCdNm}),
+               #{itdYn}, #{paragGapMargYn},
+               (SELECT CD FROM common_code WHERE CD_NM = #{nowPostStusCdNm}),
+               #{nowPostStusChgrId}, #{befPostId}, #{nextPostId}
     </insert>
+
+    <update id="updateNextPostId" parameterType="map">
+        update post
+            set NEXT_POST_ID = #{nextPostId}
+        where POST_ID = #{postId}
+    </update>
+
 
     <select id="getPostsByChnlUri" parameterType="map" resultType="ChannelPostDto">
         SELECT p.*, s.SER_TTL, cd.CD_NM as nowPostStusCdNm , u.NIC, tb.STYLE_TEXT
@@ -27,4 +45,68 @@
             </choose>
             LIMIT #{pageSize} OFFSET #{offset}
         </select>
+
+    <select id="findLastId" resultType="Integer">
+        SELECT MAX(POST_ID) FROM post
+    </select>
+
+    <select id="findInSeries" parameterType="map" resultType="Integer">
+        SELECT MAX(POST_ID)
+        FROM post
+        WHERE CHNL_ID = (SELECT CHNL_ID FROM channel WHERE CHNL_URI = #{chnlUri})
+          AND (SER_ID = #{serId} OR (#{serId} IS NULL AND SER_ID IS NULL))
+    </select>
+
+    <select id="findInNonSeries" resultType="Integer"></select>
+
+    <select id="findInStudioByChnlUri" parameterType="String" resultType="StudioPostDto">
+        SELECT p.POST_ID as postId,
+               p.POST_TTL as postTtl,
+               p.POST_INQR_CNT as postInqrCnt,
+               p.POST_REP_CNT as postRepCnt,
+               p.POST_LIK_CNT as postLikCnt,
+               p.POST_PCHRG_YN as postPchrgYn,
+               p.POST_THUMN_PATH as postThumnPath,
+               p.SER_ID as serId,
+               p.OPUB_PLAN_ID as opubPlanId,
+               p.POST_PBLC_DTM as postPblcDtm,
+               p.CHNL_ID as chnlId,
+               p.NOW_POST_STUS_CD as nowPostStusCd,
+               p.NOW_POST_STUD_CHG_DTM as nowPostStudChgDtm,
+               s.SER_TTL as serTtl,
+               u.NIC as userNic,
+               ccd.CD_NM as nowPostStusCdNm
+        FROM post as p
+                 INNER JOIN channel c ON p.CHNL_ID = c.CHNL_ID
+                 INNER JOIN user as u ON c.CRT_ID = u.USER_ID
+                 INNER JOIN common_code as ccd ON p.NOW_POST_STUS_CD = ccd.CD
+                 LEFT JOIN series as s ON p.SER_ID = s.SER_ID
+        WHERE c.CHNL_URI = #{chnlUri}
+    </select>
+
+    <select id="findById" parameterType="Integer" resultType="StudioPostDto">
+        SELECT p.POST_ID as postId,
+               p.POST_TTL as postTtl,
+               p.POST_INQR_CNT as postInqrCnt,
+               p.POST_REP_CNT as postRepCnt,
+               p.POST_LIK_CNT as postLikCnt,
+               p.POST_PCHRG_YN as postPchrgYn,
+               p.POST_THUMN_PATH as postThumnPath,
+               p.SER_ID as serId,
+               p.OPUB_PLAN_ID as opubPlanId,
+               p.POST_PBLC_DTM as postPblcDtm,
+               p.CHNL_ID as chnlId,
+               p.NOW_POST_STUS_CD as nowPostStusCd,
+               p.NOW_POST_STUD_CHG_DTM as nowPostStudChgDtm,
+               s.SER_TTL as serTtl,
+               u.NIC as userNic,
+               cc.CD_NM as nowPostStusCdNm
+        FROM post as p
+                 INNER JOIN channel c ON p.CHNL_ID = c.CHNL_ID
+                 INNER JOIN user as u ON c.CRT_ID = u.USER_ID
+                 INNER JOIN common_code as cc ON p.NOW_POST_STUS_CD = cc.CD
+                 LEFT JOIN series as s ON p.SER_ID = s.SER_ID
+        WHERE p.POST_ID = #{postId};
+    </select>
+
 </mapper>
