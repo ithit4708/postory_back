@@ -54,7 +54,7 @@
         SELECT MAX(POST_ID)
         FROM post
         WHERE CHNL_ID = (SELECT CHNL_ID FROM channel WHERE CHNL_URI = #{chnlUri})
-          AND SER_ID = #{serId}
+          AND (SER_ID = #{serId} OR (#{serId} IS NULL AND SER_ID IS NULL))
     </select>
 
     <select id="findInNonSeries" resultType="Integer"></select>
@@ -79,7 +79,7 @@
         FROM post as p
                  INNER JOIN channel c ON p.CHNL_ID = c.CHNL_ID
                  INNER JOIN user as u ON c.CRT_ID = u.USER_ID
-                 INNER JOIN common_code as ccd ON p.NOW_POST_STUS_CD = ccd.CD_NM
+                 INNER JOIN common_code as ccd ON p.NOW_POST_STUS_CD = ccd.CD
                  LEFT JOIN series as s ON p.SER_ID = s.SER_ID
         WHERE c.CHNL_URI = #{chnlUri}
     </select>
