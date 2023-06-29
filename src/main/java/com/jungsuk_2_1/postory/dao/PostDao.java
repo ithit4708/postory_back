@@ -17,8 +17,6 @@ public interface PostDao {
     Integer findInSeries(Map<String, Object> params);
     Integer findInNonSeries();
     StudioPostDto findInStudioByChnlUri(String chnlUri);
-
     void updateNextPostId(Map<String,Object> params);
-
     StudioPostDto findById(Integer postId);
 }

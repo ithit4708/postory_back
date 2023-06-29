@@ -22,9 +22,6 @@ public class PostService {
 
   private final SeriesDao seriesDao;
 
-
-
-  //  ChannelDao channelDao;
   @Autowired
   PostService(PostDao postDao, SeriesDao seriesDao) {
     this.postDao = postDao;
@@ -33,9 +30,11 @@ public class PostService {
   public StudioPostDto createPost(String userId,PostDto postDto) {
 
     Integer newPostId = postDao.findLastId() + 1;
+
     Integer befPostId;
 
-    befPostId = getMaxPostIdinSer(postDto.getChnlUri(),postDto.getSerId());
+    befPostId = getMaxPostIdinSer(postDto.getChnlUri(), postDto.getSerId());
+
 
     Map<String, Object> params = new HashMap<>();
     params.put("name", "createPost");
@@ -50,13 +49,10 @@ public class PostService {
     params.put("adoYn", postDto.getAdoYn());
     params.put("chnlId", postDto.getChnlId());
     params.put("chnlUri", postDto.getChnlUri());
-//    params.put("basicFontCd", postDto.getBasicFontCd());
-//    params.put("basicParagAlgnCd", postDto.getBasicParagAlgnCd());
     params.put("basicFontCdNm",postDto.getBasicFontCdNm());
     params.put("basicParagAlgnCdNm", postDto.getBasicParagAlgnCdNm());
     params.put("itdYn", postDto.getItdYn());
     params.put("paragGapMargYn", postDto.getParagGapMargYn());
-//    params.put("nowPostStusCd", postDto.getNowPostStusCd());
     params.put("nowPostStusCdNm", postDto.getNowPostStusCdNm());
     params.put("nowPostStusChgrId", userId);
     params.put("befPostId", befPostId);
@@ -68,9 +64,6 @@ public class PostService {
     args.put("postId", befPostId);
     args.put("nextPostId", postDao.findLastId());
     postDao.updateNextPostId(args);
-
-    System.out.println("newPostId = " + newPostId);
-    System.out.println(postDao.findById(newPostId));
 
     return postDao.findById(newPostId);
   }
@@ -96,6 +89,7 @@ public class PostService {
     Map<String, Object> params = new HashMap<>();
     params.put("chnlUri", chnlUri);
     params.put("serId", serId);
+
     return postDao.findInSeries(params);
   }
 

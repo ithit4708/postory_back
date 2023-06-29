@@ -3,19 +3,19 @@
 
 <mapper namespace="com.jungsuk_2_1.postory.dao.PostDao">
 
-        <insert id="createPost" parameterType="map">
-            INSERT INTO post (POST_ID, POST_TTL, POST_SB_TTL, POST_PCHRG_YN,
-                              POST_THUMN_PATH, SER_ID, PCHRG_BLK_PURC_PNT, NTCE_SETT_YN, ADO_YN, CHNL_ID,
-                              BASIC_FONT_CD, BASIC_PARAG_ALGN_CD, ITD_YN, PARAG_GAP_MARG_YN, NOW_POST_STUS_CD, NOW_POST_STUD_CHG_DTM,
-                              NOW_POST_STUS_CHGR_ID, BEF_POST_ID, NEXT_POST_ID)
-            SELECT #{postId}, #{postTtl}, #{postSbTtl}, #{postPchrgYn},
-                   #{postThumnPath}, #{serId}, #{pchrgBlkPurcPnt}, #{ntceSettYn}, #{adoYn}, (SELECT CHNL_ID FROM channel WHERE CHNL_URI = #{chnlUri}),
-                   (SELECT CD FROM common_code WHERE CD_NM = #{basicFontCdNm}),
-                   (SELECT CD FROM common_code WHERE CD_NM = #{basicParagAlgnCdNm}),
-                   #{itdYn}, #{paragGapMargYn},
-                   (SELECT CD FROM common_code WHERE CD_NM = #{nowPostStusCdNm}),
-                   #{nowPostStudChgDtm}, #{nowPostStusChgrId}, #{befPostId}, #{nextPostId}
-        </insert>
+    <insert id="createPost" parameterType="map">
+        INSERT INTO post (POST_ID, POST_TTL, POST_SB_TTL, POST_PCHRG_YN,
+                          POST_THUMN_PATH, SER_ID, PCHRG_BLK_PURC_PNT, NTCE_SETT_YN, ADO_YN, CHNL_ID,
+                          BASIC_FONT_CD, BASIC_PARAG_ALGN_CD, ITD_YN, PARAG_GAP_MARG_YN, NOW_POST_STUS_CD,
+                          NOW_POST_STUS_CHGR_ID, BEF_POST_ID, NEXT_POST_ID)
+        SELECT #{postId}, #{postTtl}, #{postSbTtl}, #{postPchrgYn},
+               #{postThumnPath}, #{serId}, #{pchrgBlkPurcPnt}, #{ntceSettYn}, #{adoYn}, (SELECT CHNL_ID FROM channel WHERE CHNL_URI = #{chnlUri}),
+               (SELECT CD FROM common_code WHERE CD_NM = #{basicFontCdNm}),
+               (SELECT CD FROM common_code WHERE CD_NM = #{basicParagAlgnCdNm}),
+               #{itdYn}, #{paragGapMargYn},
+               (SELECT CD FROM common_code WHERE CD_NM = #{nowPostStusCdNm}),
+               #{nowPostStusChgrId}, #{befPostId}, #{nextPostId}
+    </insert>
 
     <update id="updateNextPostId" parameterType="map">
         update post
@@ -54,7 +54,7 @@
         SELECT MAX(POST_ID)
         FROM post
         WHERE CHNL_ID = (SELECT CHNL_ID FROM channel WHERE CHNL_URI = #{chnlUri})
-          AND SER_ID = #{serId}
+          AND (SER_ID = #{serId} OR (#{serId} IS NULL AND SER_ID IS NULL))
     </select>
 
     <select id="findInNonSeries" resultType="Integer"></select>
@@ -79,7 +79,7 @@
         FROM post as p
                  INNER JOIN channel c ON p.CHNL_ID = c.CHNL_ID
                  INNER JOIN user as u ON c.CRT_ID = u.USER_ID
-                 INNER JOIN common_code as ccd ON p.NOW_POST_STUS_CD = ccd.CD_NM
+                 INNER JOIN common_code as ccd ON p.NOW_POST_STUS_CD = ccd.CD
                  LEFT JOIN series as s ON p.SER_ID = s.SER_ID
         WHERE c.CHNL_URI = #{chnlUri}
     </select>
