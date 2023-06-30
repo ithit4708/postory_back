@@ -60,4 +60,22 @@ public class SeriesService {
         return seriesDao.findInStudioByChnlUri(chnlUri);
     };
 
+    public StudioSeriesDto updateSeries(String userId, Integer seriesId, SeriesDto seriesDto) {
+
+        System.out.println("seriesDto = " + seriesDto);
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("serId", seriesId);
+        params.put("serThumnPath", seriesDto.getSerThumnPath());
+        params.put("serTtl", seriesDto.getSerTtl());
+        params.put("serDesc", seriesDto.getSerDesc());
+        params.put("chnlDsgntSerOdr", seriesDto.getChnlDsgntSerOdr());
+        params.put("serStusChgrId",userId);
+        params.put("serStusCdNm", seriesDto.getSerStusCdNm());
+
+        seriesDao.updateSeries(params);
+
+        return seriesDao.findById(seriesId);
+    }
+
 }

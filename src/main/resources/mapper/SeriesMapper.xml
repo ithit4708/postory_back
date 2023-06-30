@@ -3,6 +3,17 @@
 
 <mapper namespace="com.jungsuk_2_1.postory.dao.SeriesDao">
 
+    <update id="updateSeries" parameterType="map">
+        UPDATE series
+        SET SER_THUMN_PATH = #{serThumnPath},
+            SER_TTL = #{serTtl},
+            SER_DESC = #{serDesc},
+            CHNL_DSGNT_SER_ODR = #{chnlDsgntSerOdr},
+            SER_STUS_CHGR_ID= #{serStusChgrId},
+            SER_STUS_CD = (SELECT CD FROM common_code WHERE CD_NM = #{serStusCdNm})
+        WHERE SER_ID = #{serId};
+    </update>
+
     <select id="findByChnlUri" parameterType="map" resultType="ChannelSeriesDto">
         SELECT
         s.SER_ID,
