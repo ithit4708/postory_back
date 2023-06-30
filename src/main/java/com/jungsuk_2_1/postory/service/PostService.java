@@ -4,6 +4,7 @@ import com.jungsuk_2_1.postory.dao.PostDao;
 import com.jungsuk_2_1.postory.dao.SeriesDao;
 import com.jungsuk_2_1.postory.dto.ChannelPostDto;
 import com.jungsuk_2_1.postory.dto.PostDto;
+import com.jungsuk_2_1.postory.dto.PostRelatedDto;
 import com.jungsuk_2_1.postory.dto.StudioPostDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,7 @@ import java.util.Map;
 @Slf4j
 @Service
 public class PostService {
-
   private final PostDao postDao;
-
   private final SeriesDao seriesDao;
 
   @Autowired
@@ -27,13 +26,17 @@ public class PostService {
     this.postDao = postDao;
     this.seriesDao = seriesDao;
   }
-  public StudioPostDto createPost(String userId,PostDto postDto) {
+  public StudioPostDto createPost (String userId, PostDto postDto){
 
     Integer newPostId = postDao.findLastId() + 1;
 
+    System.out.println("newPostId = " + newPostId);
+
     Integer befPostId;
 
-    befPostId = getMaxPostIdinSer(postDto.getChnlUri(), postDto.getSerId());
+    befPostId = getMaxPostIdInSer(postDto.getChnlUri(), postDto.getSerId());
+
+    System.out.println("befPostId = " + befPostId);
 
 
     Map<String, Object> params = new HashMap<>();
@@ -49,7 +52,7 @@ public class PostService {
     params.put("adoYn", postDto.getAdoYn());
     params.put("chnlId", postDto.getChnlId());
     params.put("chnlUri", postDto.getChnlUri());
-    params.put("basicFontCdNm",postDto.getBasicFontCdNm());
+    params.put("basicFontCdNm", postDto.getBasicFontCdNm());
     params.put("basicParagAlgnCdNm", postDto.getBasicParagAlgnCdNm());
     params.put("itdYn", postDto.getItdYn());
     params.put("paragGapMargYn", postDto.getParagGapMargYn());
@@ -65,10 +68,12 @@ public class PostService {
     args.put("nextPostId", postDao.findLastId());
     postDao.updateNextPostId(args);
 
+    System.out.println("postDao.findByID ="+postDao.findById(newPostId));
+
     return postDao.findById(newPostId);
   }
 
-  public List<ChannelPostDto> getPostsByChnlUri(String chnlUri, int page, String orderMethod, int pageSize) {
+  public List<ChannelPostDto> getPostsByChnlUri (String chnlUri,int page, String orderMethod,int pageSize){
 
     Map<String, Object> params = new HashMap<>();
     params.put("name", "channelPosts");
@@ -80,21 +85,36 @@ public class PostService {
     return postDao.getPostsByChnlUri(params);
   }
 
-  public StudioPostDto getPostInStudio(String chnlUri){
+  public StudioPostDto getPostInStudio (String chnlUri){
 
     return postDao.findInStudioByChnlUri(chnlUri);
   }
 
-  private int getMaxPostIdinSer(String chnlUri, Integer serId) {
+  private Integer getMaxPostIdInSer (String chnlUri, Integer serId){
     Map<String, Object> params = new HashMap<>();
     params.put("chnlUri", chnlUri);
     params.put("serId", serId);
 
-    return postDao.findInSeries(params);
+    System.out.println("params = " + params);
+    System.out.println("serId = " + serId);
+
+    if (serId == null){
+      Integer maxId = postDao.findInNonSeries(params);
+
+      System.out.println("maxId = " + maxId);
+
+      return maxId;
+    } else {
+      Integer maxId = postDao.findInSeries(params);
+
+      System.out.println("maxId = " + maxId);
+      return maxId;
+    }
+
   }
 
+  public StudioPostDto updatePost (String userId, Integer postId, PostDto postDto){
 
-  public StudioPostDto updatePost(String userId,Integer postId ,PostDto postDto) {
 
     Map<String, Object> params = new HashMap<>();
     params.put("name", "editPost");
@@ -106,7 +126,7 @@ public class PostService {
     params.put("pchrgBlkPurcPnt", postDto.getPchrgBlkPurcPnt());
     params.put("ntceSettYn", postDto.getNtceSettYn());
     params.put("adoYn", postDto.getAdoYn());
-    params.put("basicFontCdNm",postDto.getBasicFontCdNm());
+    params.put("basicFontCdNm", postDto.getBasicFontCdNm());
     params.put("basicParagAlgnCdNm", postDto.getBasicParagAlgnCdNm());
     params.put("itdYn", postDto.getItdYn());
     params.put("paragGapMargYn", postDto.getParagGapMargYn());
@@ -115,5 +135,13 @@ public class PostService {
 
     postDao.updatePost(params);
     return postDao.findById(postId);
+  }
+  public boolean deletePost(Integer postId){
+
+    PostRelatedDto postRelatedDto = postDao.findRelatedPostById(postId);
+    postDao.updateNextPostBefPostId(postRelatedDto.getNextPostId(),postRelatedDto.getBefPostId());
+    postDao.updateBefPostNextPostId(postRelatedDto.getBefPostId(),postRelatedDto.getNextPostId());
+    postDao.deletePost(postId);
+    return postDao.doesExist(postId);
   }
 }

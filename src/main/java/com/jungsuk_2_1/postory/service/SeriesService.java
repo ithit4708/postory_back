@@ -1,7 +1,9 @@
 package com.jungsuk_2_1.postory.service;
 
+import com.jungsuk_2_1.postory.dao.PostDao;
 import com.jungsuk_2_1.postory.dao.SeriesDao;
 import com.jungsuk_2_1.postory.dto.ChannelSeriesDto;
+import com.jungsuk_2_1.postory.dto.OnlyIdDto;
 import com.jungsuk_2_1.postory.dto.SeriesDto;
 import com.jungsuk_2_1.postory.dto.StudioSeriesDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +17,15 @@ import java.util.Map;
 public class SeriesService {
 
     private final SeriesDao seriesDao;
+    private final PostDao postDao;
+
+    private final PostService postService;
 
     @Autowired
-    public SeriesService(SeriesDao seriesDao) {
+    public SeriesService(SeriesDao seriesDao, PostDao postDao, PostService postService) {
         this.seriesDao = seriesDao;
+        this.postDao = postDao;
+        this.postService = postService;
     }
 
     public List<ChannelSeriesDto> getSeriesByChnlUri(String chnlUri, int page, String orderMethod, int pageSize) {
@@ -78,4 +85,14 @@ public class SeriesService {
         return seriesDao.findById(seriesId);
     }
 
+    public boolean deleteSeries(Integer serId) {
+        List<OnlyIdDto> postIds = postDao.findIdBySerId(serId);
+
+
+        for (OnlyIdDto postId : postIds){
+            postService.deletePost(postId.getId());
+        }
+        seriesDao.deleteSeries(serId);
+        return seriesDao.doesExist(serId);
+    }
 }
