@@ -46,6 +46,5 @@ public class SeriesController {
             error.put("errMsg", e.getMessage());
             return ResponseEntity.badRequest().body(error);
         }
-
     }
 }

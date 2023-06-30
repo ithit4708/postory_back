@@ -19,4 +19,6 @@ public interface PostDao {
     StudioPostDto findInStudioByChnlUri(String chnlUri);
     void updateNextPostId(Map<String,Object> params);
     StudioPostDto findById(Integer postId);
+
+    void updatePost(Map<String, Object> params);
 }
