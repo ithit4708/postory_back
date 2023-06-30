@@ -94,4 +94,26 @@ public class PostService {
   }
 
 
+  public StudioPostDto updatePost(String userId,Integer postId ,PostDto postDto) {
+
+    Map<String, Object> params = new HashMap<>();
+    params.put("name", "editPost");
+    params.put("postId", postId);
+    params.put("postTtl", postDto.getPostTtl());
+    params.put("postSbTtl", postDto.getPostSbTtl());
+    params.put("postPchrgYn", postDto.getPostPchrgYn());
+    params.put("postThumnPath", postDto.getPostThumnPath());
+    params.put("pchrgBlkPurcPnt", postDto.getPchrgBlkPurcPnt());
+    params.put("ntceSettYn", postDto.getNtceSettYn());
+    params.put("adoYn", postDto.getAdoYn());
+    params.put("basicFontCdNm",postDto.getBasicFontCdNm());
+    params.put("basicParagAlgnCdNm", postDto.getBasicParagAlgnCdNm());
+    params.put("itdYn", postDto.getItdYn());
+    params.put("paragGapMargYn", postDto.getParagGapMargYn());
+    params.put("nowPostStusCdNm", postDto.getNowPostStusCdNm());
+    params.put("nowPostStusChgrId", userId);
+
+    postDao.updatePost(params);
+    return postDao.findById(postId);
+  }
 }

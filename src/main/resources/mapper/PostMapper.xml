@@ -23,6 +23,25 @@
         where POST_ID = #{postId}
     </update>
 
+    <update id="updatePost" parameterType="map">
+        UPDATE post
+        SET POST_TTL = #{postTtl},
+            POST_SB_TTL = #{postSbTtl},
+            POST_PCHRG_YN = #{postPchrgYn},
+            POST_THUMN_PATH = #{postThumnPath},
+            PCHRG_BLK_PURC_PNT = #{pchrgBlkPurcPnt},
+            NTCE_SETT_YN = #{ntceSettYn},
+            ADO_YN = #{adoYn},
+            BASIC_FONT_CD = (SELECT CD FROM common_code WHERE CD_NM = #{basicFontCdNm}),
+            BASIC_PARAG_ALGN_CD = (SELECT CD FROM common_code WHERE CD_NM = #{basicParagAlgnCdNm}),
+            ITD_YN = #{itdYn},
+            PARAG_GAP_MARG_YN = #{paragGapMargYn},
+            NOW_POST_STUS_CD = (SELECT CD FROM common_code WHERE CD_NM = #{nowPostStusCdNm}),
+            NOW_POST_STUS_CHGR_ID = #{nowPostStusChgrId}
+        WHERE POST_ID = #{postId};
+
+    </update>
+
 
     <select id="getPostsByChnlUri" parameterType="map" resultType="ChannelPostDto">
         SELECT p.*, s.SER_TTL, cd.CD_NM as nowPostStusCdNm , u.NIC, tb.STYLE_TEXT
@@ -108,5 +127,4 @@
                  LEFT JOIN series as s ON p.SER_ID = s.SER_ID
         WHERE p.POST_ID = #{postId};
     </select>
-
 </mapper>

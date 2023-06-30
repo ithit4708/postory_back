@@ -33,9 +33,12 @@ public class SeriesService {
         return seriesDao.findByChnlUri(params);
     }
 
-    public StudioSeriesDto createSeries(SeriesDto seriesDto) {
+    public StudioSeriesDto createSeries(String userId,SeriesDto seriesDto) {
+
+        Integer newSerId = seriesDao.findLastId() + 1;
+
         Map<String, Object> params = new HashMap<>();
-        params.put("serId", seriesDto.getSerId());
+        params.put("serId", newSerId);
         params.put("serThumnPath", seriesDto.getSerThumnPath());
         params.put("serTtl", seriesDto.getSerTtl());
         params.put("serDesc", seriesDto.getSerDesc());
@@ -44,16 +47,35 @@ public class SeriesService {
         params.put("recenPblcPostId", seriesDto.getRecenPblcPostId());
         params.put("chnlId", seriesDto.getChnlId());
         params.put("chnlUri",seriesDto.getChnlUri());
-        params.put("serStusCd", seriesDto.getSerStusCd());
-        params.put("serStusChgrId", seriesDto.getSerStusChgrId());
+        params.put("serStusChgrId",userId);
+        params.put("serStusCdNm", seriesDto.getSerStusCdNm());
 
         seriesDao.createSeries(params);
+        seriesDao.findById(newSerId);
 
-        return getSeriesInStudio(seriesDto.getChnlUri());
+        return seriesDao.findById(newSerId);
     }
 
     public StudioSeriesDto getSeriesInStudio(String chnlUri){
         return seriesDao.findInStudioByChnlUri(chnlUri);
     };
+
+    public StudioSeriesDto updateSeries(String userId, Integer seriesId, SeriesDto seriesDto) {
+
+        System.out.println("seriesDto = " + seriesDto);
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("serId", seriesId);
+        params.put("serThumnPath", seriesDto.getSerThumnPath());
+        params.put("serTtl", seriesDto.getSerTtl());
+        params.put("serDesc", seriesDto.getSerDesc());
+        params.put("chnlDsgntSerOdr", seriesDto.getChnlDsgntSerOdr());
+        params.put("serStusChgrId",userId);
+        params.put("serStusCdNm", seriesDto.getSerStusCdNm());
+
+        seriesDao.updateSeries(params);
+
+        return seriesDao.findById(seriesId);
+    }
 
 }
