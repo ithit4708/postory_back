@@ -3,6 +3,7 @@ package com.jungsuk_2_1.postory.service;
 import com.jungsuk_2_1.postory.dto.*;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ProfileService {
     UserDto getUserByNickname(String nic);
@@ -11,6 +12,6 @@ public interface ProfileService {
 
     ProfileUserDto getProfileUser(String nic);
 
-    List<ProfilePostsDto> getProfilePosts(String userId);
-    List<ProfileSeriseDto> getProfileSerise(String userId);
+    List<ProfilePostsDto> getProfilePosts(Map<String,Object> postInfoMap);
+    List<ProfileSeriseDto> getProfileSerise(Map<String,Object> seriesInfoMap);
 }

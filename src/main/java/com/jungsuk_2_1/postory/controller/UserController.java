@@ -86,38 +86,41 @@ public class UserController {
                 String userStatus = userService.checkUserStatus(user);
 
                 //유저의 상태가 신규=ST00110
-                if (Objects.equals(userStatus, "ST00110")) {
-                    HeaderUserDto newUser = HeaderUserDto.builder()
-                            .token(token)
-                            .eid(user.getEid())
-                            .userStusCd(userStatus)
-                            .build();
-                    Map<String, Object> newUserMap = new HashMap<>();
-                    newUserMap.put("user", newUser);
-                    return ResponseEntity.ok().body(newUserMap);
-                }
-                //유저의 상태가 신규가 아님 =(ST00120) - 이메일인증 완료된 회원
-                if (Objects.equals(userStatus, "ST00120")) {
-                    //로그인 후 헤더정보에 필요한 정보를 담기위한 HeaderUserDto userInfo 생성
-                    HeaderUserDto userInfo = userService.getHeaderUserInfo(user.getUserId());
-                    //Map 형태로 반환하기 위해 HashMap생성
-                    Map<String, Object> headerMap = new HashMap<>();
+//                if (Objects.equals(userStatus, "ST00110")) {
+//                    HeaderUserDto newUser = HeaderUserDto.builder()
+//                            .token(token)
+//                            .eid(user.getEid())
+//                            .userStusCd(userStatus)
+//                            .build();
+//                    Map<String, Object> newUserMap = new HashMap<>();
+//                    newUserMap.put("user", newUser);
+//                    return ResponseEntity.ok().body(newUserMap);
+//                }
+//                //유저의 상태가 신규가 아님 =(ST00120) - 이메일인증 완료된 회원
+//                if (Objects.equals(userStatus, "ST00120")) {
 
-                    //user와 user_status를 join한 정보를 가져오기위한 HeaderUserDto 사용
-                    HeaderUserDto headerUserInfo = HeaderUserDto.builder()
-                            .token(token)
-                            .userStusCd(userInfo.getUserStusCd())
-                            .userImgPath(userInfo.getUserImgPath())
-                            .nic(userInfo.getNic()).build();
-                    //user와 channel을 join한 정보와 소유한 channel을 모두 가져오기 위한 List 사용
-                    List<HeaderChannelDto> list = userService.getHeaderInfo(user.getUserId());
+                //유저 상태 상관 없이
+                //로그인 후 헤더정보에 필요한 정보를 담기위한 HeaderUserDto userInfo 생성
+                HeaderUserDto userInfo = userService.getHeaderUserInfo(user.getUserId());
+                //Map 형태로 반환하기 위해 HashMap생성
+                Map<String, Object> headerMap = new HashMap<>();
 
-                    //가져온 user 정보와 channel 정보를 map에 저장.
-                    headerMap.put("user", headerUserInfo);
-                    headerMap.put("channel", list);
+                //user와 user_status를 join한 정보를 가져오기위한 HeaderUserDto 사용
+                HeaderUserDto headerUserInfo = HeaderUserDto.builder()
+                        .token(token)
+                        .eid(user.getEid())
+                        .userStusCd(userInfo.getUserStusCd())
+                        .userImgPath(userInfo.getUserImgPath())
+                        .nic(userInfo.getNic()).build();
+                //user와 channel을 join한 정보와 소유한 channel을 모두 가져오기 위한 List 사용
+                List<HeaderChannelDto> list = userService.getHeaderInfo(user.getUserId());
 
-                    return ResponseEntity.ok().body(headerMap);
-                }
+                //가져온 user 정보와 channel 정보를 map에 저장.
+                headerMap.put("user", headerUserInfo);
+                headerMap.put("channel", list);
+
+                return ResponseEntity.ok().body(headerMap);
+//                }
             } else {
                 throw new RuntimeException("올바른 이메일/비밀번호를 입력해주세요");
             }
@@ -127,6 +130,5 @@ public class UserController {
             error.put("errMsg", e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
         }
-        return null;
     }
 }
