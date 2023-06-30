@@ -22,8 +22,8 @@ public class StudioController {
         this.channelService = channelService;
     }
 
-    @DeleteMapping
-    public ResponseEntity<?> deleteChannel(@AuthenticationPrincipal String userId, @RequestParam String chnlUri){
+    @DeleteMapping("/delete/channel")
+    public ResponseEntity<?> deleteChannel(@AuthenticationPrincipal String userId, @PathVariable String chnlUri){
 
         try{
 
@@ -39,7 +39,7 @@ public class StudioController {
         }
     }
 
-    @PutMapping
+    @PutMapping("/edit/channel")
     public ResponseEntity<?> update(@AuthenticationPrincipal String userId,@RequestBody ChannelDto channelDto){
 
         ChannelDto dto = channelService.update(userId,channelDto);

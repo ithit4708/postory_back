@@ -42,6 +42,37 @@
 
     </update>
 
+    <update id="goToTrash">
+        update post
+        set  NOW_POST_STUS CD = 'ST00450'
+        where POST_ID = #{postId};
+    </update>
+
+    <update id="updateNextPostBefPostId">
+        update post
+        set  BEF_POST_ID = #{befPostId}
+        where POST_ID = #{postId};
+    </update>
+
+    <update id="updateBefPostNextPostId">
+        update post
+        set  NEXT_POST_ID =  #{nextPostId}
+        where POST_ID = #{postId};
+    </update>
+
+    <delete id="deletePost" parameterType="Integer">
+        delete from post
+        where POST_ID = #{postId}
+    </delete>
+
+    <delete id="deletePostByChnlId" parameterType="Integer">
+        delete from post
+        where CHNL_ID = #{chnlId}
+    </delete>
+    <delete id="deletePostBySerId" parameterType="Integer">
+        delete from post
+        where SER_ID = #{serId}
+    </delete>
 
     <select id="getPostsByChnlUri" parameterType="map" resultType="ChannelPostDto">
         SELECT p.*, s.SER_TTL, cd.CD_NM as nowPostStusCdNm , u.NIC, tb.STYLE_TEXT
@@ -73,10 +104,15 @@
         SELECT MAX(POST_ID)
         FROM post
         WHERE CHNL_ID = (SELECT CHNL_ID FROM channel WHERE CHNL_URI = #{chnlUri})
-          AND (SER_ID = #{serId} OR (#{serId} IS NULL AND SER_ID IS NULL))
+          AND SER_ID = #{serId}
     </select>
 
-    <select id="findInNonSeries" resultType="Integer"></select>
+    <select id="findInNonSeries" parameterType="map" resultType="Integer">
+        SELECT MAX(POST_ID)
+        FROM post
+        WHERE CHNL_ID = (SELECT CHNL_ID FROM channel WHERE CHNL_URI = #{chnlUri})
+          AND (SER_ID = #{serId} OR (#{serId} IS NULL AND SER_ID IS NULL))
+    </select>
 
     <select id="findInStudioByChnlUri" parameterType="String" resultType="StudioPostDto">
         SELECT p.POST_ID as postId,
@@ -126,5 +162,26 @@
                  INNER JOIN common_code as cc ON p.NOW_POST_STUS_CD = cc.CD
                  LEFT JOIN series as s ON p.SER_ID = s.SER_ID
         WHERE p.POST_ID = #{postId};
+    </select>
+
+    <select id="doesExist" parameterType="Integer" resultType="java.lang.Boolean">
+        select exists(select  1 from post where POST_ID = #{postID})
+    </select>
+
+    <select id="findRelatedPostById" resultType="PostRelatedDto">
+        select p.POST_ID, p.BEF_POST_ID, p.NEXT_POST_ID
+        from post as p
+        where POST_ID = #{postId}
+    </select>
+
+    <select id="findIdBySerId" parameterType="Integer" resultType="OnlyIdDto">
+        select p.POST_ID as id
+        from post as p
+        where p.SER_ID = #{serId}
+    </select>
+    <select id="findIdByChnlId" resultType="OnlyIdDto">
+       select POST_ID
+        from post
+        where CHNL_ID = #{chnlId}
     </select>
 </mapper>

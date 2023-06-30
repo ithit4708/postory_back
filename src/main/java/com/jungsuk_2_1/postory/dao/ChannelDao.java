@@ -1,6 +1,8 @@
 package com.jungsuk_2_1.postory.dao;
 
 import com.jungsuk_2_1.postory.dto.ChannelDto;
+import com.jungsuk_2_1.postory.dto.ChannelSimpleDto;
+import com.jungsuk_2_1.postory.dto.OnlyIdDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -12,6 +14,8 @@ public interface ChannelDao {
     int countUserChannels(String crtId);
     int findLastId();
     void delete(ChannelDto ChannelDto);
+
+    void deleteChannel(String chnlUri);
     List<ChannelDto> findByUserId(String id);
 
     boolean doesUriExist(String chnlUri);
@@ -21,4 +25,6 @@ public interface ChannelDao {
     ChannelDto findByChnlUri(String chnlUri);
 
     void update(ChannelDto channelDto);
+
+    ChannelSimpleDto findIdByChnlUri(String chnlUri);
 }

@@ -1,14 +1,19 @@
 package com.jungsuk_2_1.postory.service;
 
 import com.jungsuk_2_1.postory.dao.ChannelDao;
+import com.jungsuk_2_1.postory.dao.PostDao;
+import com.jungsuk_2_1.postory.dao.SeriesDao;
 import com.jungsuk_2_1.postory.dao.UserDao;
 import com.jungsuk_2_1.postory.dto.ChannelDto;
+import com.jungsuk_2_1.postory.dto.ChannelSimpleDto;
 import com.jungsuk_2_1.postory.dto.ChannelUserDto;
+import com.jungsuk_2_1.postory.dto.OnlyIdDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -16,11 +21,19 @@ import java.util.Optional;
 public class ChannelService {
     private final ChannelDao channelDao;
     private final UserDao userDao;
+    private final PostService postService;
+    private final SeriesService seriesService;
+    private final SeriesDao seriesDao;
+    private final PostDao postDao;
 
     @Autowired
-    public ChannelService(ChannelDao channelDao, UserDao userDao){
+    public ChannelService(ChannelDao channelDao, UserDao userDao, PostService postService, SeriesService seriesService, SeriesDao seriesDao, PostDao postDao){
         this.channelDao = channelDao;
         this.userDao = userDao;
+        this.postService = postService;
+        this.seriesService = seriesService;
+        this.seriesDao = seriesDao;
+        this.postDao = postDao;
     }
 
     public ChannelUserDto getUserByChannelUri(final String channelUri){
@@ -74,7 +87,8 @@ public class ChannelService {
 
     public List<ChannelDto> delete(final String userId, final String chnlUri) {
 
-        ChannelDto dto = channelDao.findByChnlUri(chnlUri);
+        ChannelSimpleDto channel = channelDao.findIdByChnlUri(chnlUri);
+        Integer chnlId = channel.getChnlId();
 //        나눠서 처리해야 없어서 못없애는 것과 있는데 못없애는 걸 구분할 수 있다.
         try {
 //            1. 채널아이디와 일치하는 채널을 가져온다.
@@ -82,12 +96,18 @@ public class ChannelService {
 //                dtos.get(0).setChnlStusCd("ST00220");
 //                이걸 mybatis영역에서 하나, service영역에서 하나.
 //            mapper에서 처리하는 게 더 안전해 보임.
-                channelDao.delete(dto);
+
+            List<OnlyIdDto> postIds = postDao.findIdByChnlId(chnlId);
+            for (OnlyIdDto postId : postIds){
+                postService.deletePost(postId.getId());
+            }
+            seriesDao.deleteSeriesByChnlId(chnlId);
+            channelDao.deleteChannel(chnlUri);
         } catch (Exception e) {
-            log.error("error deleting dto {}", dto.getChnlId(), e);
-            throw new RuntimeException("error deleting dto " + dto.getCrtId());
+            log.error("error deleting dto {}", chnlId, e);
+            throw new RuntimeException("error deleting channel " + chnlId);
         }
-        return channelDao.findByUserId(dto.getCrtId());
+        return channelDao.findByUserId(channel.getCrtId());
     }
 
     private void checkDuplicate(final ChannelDto dto){
