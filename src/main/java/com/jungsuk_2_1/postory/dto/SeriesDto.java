@@ -47,7 +47,7 @@ public class SeriesDto {
     private Integer chnlId;
 
     /* SER_STUS_CD */
-    private Object serStusCd;
+    private String serStusCdNm;
 
     /* SER_STUS_CHGR_ID */
     private String serStusChgrId;

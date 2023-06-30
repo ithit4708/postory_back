@@ -3,6 +3,17 @@
 
 <mapper namespace="com.jungsuk_2_1.postory.dao.SeriesDao">
 
+    <update id="updateSeries" parameterType="map">
+        UPDATE series
+        SET SER_THUMN_PATH = #{serThumnPath},
+            SER_TTL = #{serTtl},
+            SER_DESC = #{serDesc},
+            CHNL_DSGNT_SER_ODR = #{chnlDsgntSerOdr},
+            SER_STUS_CHGR_ID= #{serStusChgrId},
+            SER_STUS_CD = (SELECT CD FROM common_code WHERE CD_NM = #{serStusCdNm})
+        WHERE SER_ID = #{serId};
+    </update>
+
     <select id="findByChnlUri" parameterType="map" resultType="ChannelSeriesDto">
         SELECT
         s.SER_ID,
@@ -37,14 +48,16 @@
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
-    <insert id="createSeries" parameterType="java.util.Map">
-        INSERT INTO SERIES_TABLE (SER_ID, SER_THUMN_PATH, SER_TTL, SER_DESC, SER_OPEN_DTM, SER_INQR_CNT, SER_LIK_CNT, SER_REP_CNT, SER_POST_CNT,
-                                  CHNL_DSGNT_SER_ODR, RECEN_PBLC_POST_ID, CHNL_ID, SER_STUS_CD, SER_STUS_CHGR_ID, SER_STUS_CHG_DTM)
-        VALUES (#{serId}, #{serThumnPath}, #{serTtl}, #{serDesc}, DEFAULT, #{serInqrCnt}, #{serLikCnt}, #{serRepCnt}, DEFAULT,
-                #{chnlDsgntSerOdr}, #{recenPblcPostId}, #{chnlId}, #{serStusCd}, #{serStusChgrId}, #{serStusChgDtm})
+    <insert id="createSeries" parameterType="map">
+        INSERT INTO series (SER_ID, SER_THUMN_PATH, SER_TTL, SER_DESC, SER_OPEN_DTM, SER_INQR_CNT, SER_LIK_CNT, SER_REP_CNT, SER_POST_CNT,
+                            CHNL_DSGNT_SER_ODR, RECEN_PBLC_POST_ID, CHNL_ID, SER_STUS_CD, SER_STUS_CHGR_ID, SER_STUS_CHG_DTM)
+        VALUES (#{serId}, #{serThumnPath}, #{serTtl}, #{serDesc}, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT,
+                #{chnlDsgntSerOdr}, #{recenPblcPostId}, #{chnlId}, (SELECT CD FROM common_code WHERE CD_NM = #{serStusCdNm}),
+                #{serStusChgrId}, DEFAULT)
     </insert>
 
-    <select id="findLastId" resultType="int">
+
+    <select id="findLastId" resultType="Integer">
         SELECT MAX(SER_ID) FROM series
     </select>
 
@@ -63,4 +76,18 @@
         where c.CHNL_URI = #{chnlUri}
     </select>
 
+    <select id="findById" resultType="StudioSeriesDto">
+        select s.SER_ID as serId,
+               s.SER_THUMN_PATH as serThumnPath,
+               s.SER_TTL as serTtl,
+               s.SER_OPEN_DTM as serOpenDtm,
+               s.SER_POST_CNT as serPostCnt,
+               s.CHNL_DSGNT_SER_ODR as chnlDsgntSerOdr,
+               cc.CD_NM as serStusCdNm,
+               s.SER_STUS_CHG_DTM as serStusChgDtm
+        from series as s
+                 inner join channel c on s.CHNL_ID = c.CHNL_ID
+                 inner join common_code cc on s.SER_STUS_CD = cc.CD
+        where s.SER_ID = #{serId}
+    </select>
 </mapper>
