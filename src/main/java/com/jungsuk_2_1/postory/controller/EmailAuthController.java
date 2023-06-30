@@ -5,6 +5,7 @@ import com.jungsuk_2_1.postory.dto.UserDto;
 import com.jungsuk_2_1.postory.service.EmailAuthService;
 import com.jungsuk_2_1.postory.service.EmailKeyProvider;
 import com.jungsuk_2_1.postory.service.UserService;
+import com.jungsuk_2_1.postory.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class EmailAuthController {
         this.emailKeyProvider = emailKeyProvider;
     }
 
-    @GetMapping("/auth")
+    @PostMapping("/auth")
     public ResponseEntity<?> emailAuth(@AuthenticationPrincipal String userId, @RequestBody UserDto requsetUser) throws Exception {
         try {
             // 토큰으로 확인된 로그인한 사용자 정보
@@ -59,13 +60,14 @@ public class EmailAuthController {
             emailAuthService.sendSimpleMessage(emailAuthDto);
 
             // 이메일 인증 만료 시간 계산
-            Date expireTime = emailAuthService.getExpireTime(emailAuthDto);
-            // 세계 협정 시간 대신 한국 시간으로 변경 (+9 시간)
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(expireTime);
-            cal.add(Calendar.HOUR, 9);
+            Date expDate = emailAuthService.getExpireTime(emailAuthDto);
 
-            return ResponseEntity.ok().body(cal);
+            Date newDate = DateUtils.addHours(expDate, 9); // +9시간을 적용한 새로운 Date 객체
+
+            Map<String, Date> map = new HashMap<>();
+            map.put("expDate", newDate);
+
+            return ResponseEntity.ok().body(map);
         } catch (Exception e) {
             e.printStackTrace();
             Map<String, String> error = new HashMap<>();
@@ -112,10 +114,15 @@ public class EmailAuthController {
             } else {
                 throw new RuntimeException("인증에 실패했습니다.인증번호를 확인해주세요");
             }
+            Map<String,String> okMsg = new HashMap<>();
+            okMsg.put("okMsg","이메일 인증에 성공하였습니다");
+
+            return ResponseEntity.ok().body(okMsg);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            Map<String,String> errMsg = new HashMap<>();
+            errMsg.put("errMsg",e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errMsg);
         }
-        return ResponseEntity.ok().body("이메일 인증에 성공하였습니다");
     }
 }
