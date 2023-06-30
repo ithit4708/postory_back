@@ -5,6 +5,7 @@ import com.jungsuk_2_1.postory.dto.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
@@ -30,12 +31,12 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public List<ProfilePostsDto> getProfilePosts(String userId) {
-        return profileDao.findProfilePostsByUserId(userId);
+    public List<ProfilePostsDto> getProfilePosts(Map<String,Object> postInfoMap) {
+        return profileDao.findProfilePostsByUserId(postInfoMap);
     }
 
     @Override
-    public List<ProfileSeriseDto> getProfileSerise(String userId) {
-        return profileDao.findProfileSeriesByUserId(userId);
+    public List<ProfileSeriseDto> getProfileSerise(Map<String,Object> seriesInfoMap) {
+        return profileDao.findProfileSeriesByUserId(seriesInfoMap);
     }
 }

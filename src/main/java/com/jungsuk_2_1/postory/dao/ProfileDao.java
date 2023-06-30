@@ -4,6 +4,7 @@ import com.jungsuk_2_1.postory.dto.*;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface ProfileDao {
@@ -13,6 +14,6 @@ public interface ProfileDao {
 
     ProfileUserDto findProfileUserByNic(String nic);
 
-    List<ProfilePostsDto> findProfilePostsByUserId(String userId);
-    List<ProfileSeriseDto> findProfileSeriesByUserId(String userId);
+    List<ProfilePostsDto> findProfilePostsByUserId(Map<String,Object> postInfoMap);
+    List<ProfileSeriseDto> findProfileSeriesByUserId(Map<String,Object> seriesInfoMap);
 }
