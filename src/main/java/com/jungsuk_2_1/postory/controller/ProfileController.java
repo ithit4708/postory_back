@@ -42,7 +42,7 @@ public class ProfileController {
     }
 
     @GetMapping("/posts")
-    public ResponseEntity<?> retrieveProfilePosts(@PathVariable(required = true) String nic, @RequestParam(required = false) Long page,
+    public ResponseEntity<?> retrieveProfilePosts(@PathVariable(required = true) String nic, @RequestParam(required = false) Integer page,
                                                   @AuthenticationPrincipal String userId) {
         try {
             //PathVariable로 넘어온 유저의 nic을 받아와서 DB에서 해당하는 유저의 정보 찾기.
@@ -52,8 +52,17 @@ public class ProfileController {
             //Profile에 필요한 User 정보만 가져오는 ProfileUserDto에 정보 담기
             ProfileUserDto userInfo = profileService.getProfileUser(nic);
 
+            if (page == null) {
+                page = 1;
+            }
+
             //user와 post를 join한 정보와 소유한 모든 포스트를 가져오기 위한 List 사용
-            List<ProfilePostsDto> list = profileService.getProfilePosts(user.getUserId());
+            //포스트는 최신순으로 10개씩 보여지며, 쿼리스트링(?page={})으로 넘어온 값에 따라 최신 10개 단위로 보여준다
+            int offset = (page - 1) * 10;
+            Map<String,Object> postInfoMap = new HashMap<>();
+            postInfoMap.put("userId",user.getUserId());
+            postInfoMap.put("offset",offset);
+            List<ProfilePostsDto> list = profileService.getProfilePosts(postInfoMap);
 
             userPostsMap.put("user",userInfo);
             userPostsMap.put("posts",list);
@@ -75,8 +84,16 @@ public class ProfileController {
             //Profile에 필요한 User 정보만 가져오는 ProfileUserDto에 정보 담기
             ProfileUserDto userInfo = profileService.getProfileUser(nic);
 
-            //user와 post를 join한 정보와 소유한 모든 포스트를 가져오기 위한 List 사용
-            List<ProfileSeriseDto> list = profileService.getProfileSerise(user.getUserId());
+            if (page == null) {
+                page = 1;
+            }
+            //user와 post를 join한 정보와 소유한 모든 시리즈를 가져오기 위한 List 사용
+            //시리즈는 최신순으로 5개씩 보여지며, 쿼리스트링(?page={})으로 넘어온 값에 따라 최신 5개 단위로 보여준다
+            int offset = (page - 1) * 10;
+            Map<String,Object> seriesInfoMap = new HashMap<>();
+            seriesInfoMap.put("userId",user.getUserId());
+            seriesInfoMap.put("offset",offset);
+            List<ProfileSeriseDto> list = profileService.getProfileSerise(seriesInfoMap);
 
             userSeriseMap.put("user",userInfo);
             userSeriseMap.put("serise",list);
