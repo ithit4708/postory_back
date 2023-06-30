@@ -42,7 +42,7 @@ public class PostController {
     }
 
     @PutMapping("/{postId}/edit")
-    ResponseEntity<?> updatePost(@AuthenticationPrincipal String userId,@PathVariable Integer postId ,PostDto postDto){
+    ResponseEntity<?> updatePost(@AuthenticationPrincipal String userId,@PathVariable Integer postId ,@RequestBody PostDto postDto){
         try {
             StudioPostDto studioPostDto = postService.updatePost(userId, postId ,postDto);
 

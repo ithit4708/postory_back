@@ -23,7 +23,7 @@
         where POST_ID = #{postId}
     </update>
 
-    <update id="updatePost">
+    <update id="updatePost" parameterType="map">
         UPDATE post
         SET POST_TTL = #{postTtl},
             POST_SB_TTL = #{postSbTtl},
@@ -32,12 +32,11 @@
             PCHRG_BLK_PURC_PNT = #{pchrgBlkPurcPnt},
             NTCE_SETT_YN = #{ntceSettYn},
             ADO_YN = #{adoYn},
-            CHNL_URI = #{chnlUri},
-            (SELECT CD FROM common_code WHERE CD_NM = #{basicFontCdNm}),
-            (SELECT CD FROM common_code WHERE CD_NM = #{basicParagAlgnCdNm}),
+            BASIC_FONT_CD = (SELECT CD FROM common_code WHERE CD_NM = #{basicFontCdNm}),
+            BASIC_PARAG_ALGN_CD = (SELECT CD FROM common_code WHERE CD_NM = #{basicParagAlgnCdNm}),
             ITD_YN = #{itdYn},
             PARAG_GAP_MARG_YN = #{paragGapMargYn},
-            (SELECT CD FROM common_code WHERE CD_NM = #{nowPostStusCdNm}),
+            NOW_POST_STUS_CD = (SELECT CD FROM common_code WHERE CD_NM = #{nowPostStusCdNm}),
             NOW_POST_STUS_CHGR_ID = #{nowPostStusChgrId}
         WHERE POST_ID = #{postId};
 
