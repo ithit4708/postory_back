@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jungsuk_2_1.postory.dao.SubscriptionDao">
+    <insert id="insertSubscription" parameterType="Map">
+        INSERT INTO subscription (SUBR_ID, USER_ID, CHNL_ID, SUBR_DTM)
+        SELECT next_id, #{userId}, #{chnlId}, now()
+        FROM (SELECT IFNULL(MAX(SUBR_ID), 0) + 1 AS next_id FROM subscription) AS tmp;
+    </insert>
+</mapper>
