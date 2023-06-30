@@ -40,6 +40,10 @@
         <include refid="statusCondition"/>
     </update>
 
+    <delete id="deleteChannel" parameterType="String">
+        delete from channel where CHNL_URI = #{chnlUri}
+    </delete>
+
     <select id="findByUserNic" parameterType="String" resultType="ChannelDto">
 
     </select>
@@ -153,6 +157,9 @@
         <include refid="statusCondition"/>
     </select>
 
-
-
+    <select id="findIdByChnlUri" parameterType="String" resultType="ChannelSimpleDto">
+        select c.CHNL_ID
+        FROM channel as c
+        where c.CHNL_URI = #{chnlUri}
+    </select>
 </mapper>

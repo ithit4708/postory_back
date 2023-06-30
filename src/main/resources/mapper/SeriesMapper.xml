@@ -14,6 +14,16 @@
         WHERE SER_ID = #{serId};
     </update>
 
+    <delete id="deleteSeries">
+        delete from series
+        where SER_ID = #{serId}
+    </delete>
+
+    <delete id="deleteSeriesByChnlId" parameterType="Integer">
+        delete from series
+        where CHNL_ID = #{CHNL_Id}
+    </delete>
+
     <select id="findByChnlUri" parameterType="map" resultType="ChannelSeriesDto">
         SELECT
         s.SER_ID,
@@ -89,5 +99,15 @@
                  inner join channel c on s.CHNL_ID = c.CHNL_ID
                  inner join common_code cc on s.SER_STUS_CD = cc.CD
         where s.SER_ID = #{serId}
+    </select>
+
+    <select id="doesExist" parameterType="Integer" resultType="java.lang.Boolean">
+        select exists(select  1 from series where SER_ID = #{serID})
+    </select>
+
+    <select id="findIdByChnlUri" parameterType="String" resultType="OnlyIdDto">
+        select s.SER_ID as Id
+        from series as s
+        where s.CHNL_ID = (select CHNL_ID from channel where CHNL_URI = #{chnlUri})
     </select>
 </mapper>

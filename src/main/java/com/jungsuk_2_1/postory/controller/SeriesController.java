@@ -1,9 +1,8 @@
 package com.jungsuk_2_1.postory.controller;
 
 
+import com.jungsuk_2_1.postory.dto.*;
 import com.jungsuk_2_1.postory.dto.SeriesDto;
-import com.jungsuk_2_1.postory.dto.SeriesDto;
-import com.jungsuk_2_1.postory.dto.StudioSeriesDto;
 import com.jungsuk_2_1.postory.dto.StudioSeriesDto;
 import com.jungsuk_2_1.postory.service.ChannelService;
 import com.jungsuk_2_1.postory.service.SeriesService;
@@ -16,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/studio/{chnlUri}/series")
+@RequestMapping("studio/{chnlUri}/series")
 public class SeriesController {
 
     private SeriesService seriesService;
@@ -31,13 +30,13 @@ public class SeriesController {
         try {
             StudioSeriesDto studioSeriesDto = seriesService.createSeries(userId, seriesDto);
 
-            Map<String,Object> data = new HashMap<>();
+            Map<String, Object> data = new HashMap<>();
 
             if (studioSeriesDto == null) {
                 return ResponseEntity.notFound().build(); // StudioSeriesDto가 null인 경우 404 응답
             }
 
-            data.put("series",studioSeriesDto);
+            data.put("series", studioSeriesDto);
 
             return ResponseEntity.ok().body(data);
         } catch (Exception e) {
@@ -48,17 +47,40 @@ public class SeriesController {
     }
 
     @PutMapping("/edit/{seriesId}")
-    ResponseEntity<?> updateSeries(@AuthenticationPrincipal String userId, @PathVariable Integer seriesId , @RequestBody SeriesDto seriesDto){
+    ResponseEntity<?> updateSeries(@AuthenticationPrincipal String userId, @PathVariable Integer seriesId, @RequestBody SeriesDto seriesDto) {
         try {
-            StudioSeriesDto studioSeriesDto = seriesService.updateSeries(userId, seriesId ,seriesDto);
+            StudioSeriesDto studioSeriesDto = seriesService.updateSeries(userId, seriesId, seriesDto);
 
-            Map<String,Object> data = new HashMap<>();
+            Map<String, Object> data = new HashMap<>();
 
             if (studioSeriesDto == null) {
                 return ResponseEntity.notFound().build(); // StudioSeriesDto가 null인 경우 404 응답
             }
 
-            data.put("series",studioSeriesDto);
+            data.put("series", studioSeriesDto);
+
+            return ResponseEntity.ok().body(data);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("errMsg", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+
+
+    @DeleteMapping("/delete/{serId}")
+    public ResponseEntity<?> deleteSeries(@PathVariable Integer serId) {
+
+        try {
+            boolean doesExist = seriesService.deleteSeries(serId);
+
+            Map<String, Object> data = new HashMap<>();
+
+            if (doesExist == false) {
+                data.put("doesDeleted?", "Success to delete");
+            } else {
+                data.put("doesDeleted?", "Failed to delete");
+            }
 
             return ResponseEntity.ok().body(data);
         } catch (Exception e) {
