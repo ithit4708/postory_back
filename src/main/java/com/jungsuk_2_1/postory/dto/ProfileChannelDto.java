@@ -15,4 +15,5 @@ public class ProfileChannelDto {
     private int suberCnt;
     private String chnlIntro;
     private String chnlUri;
+    private String chnlId;
 }

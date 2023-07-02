@@ -9,6 +9,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SubscriptionDto {
-    int chnlId;
+public class SubscriptionChannelDto {
+    String chnlUri;
+    String chnlId;
+    String chnlImgPath;
+    String chnlTtl;
+    String chnlIntro;
+    String userImgPath;
+    String nic;
 }
