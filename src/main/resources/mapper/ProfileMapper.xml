@@ -46,7 +46,7 @@
         LIMIT #{offset}, 5;
     </select>
 
-    <select id="findProfileSeriesByUserId" parameterType="Map" resultType="ProfilePostsDto">
+    <select id="findProfileSeriesByUserId" parameterType="Map" resultType="ProfileSeriseDto">
         SELECT s.ser_thumn_path, s.ser_ttl, s.ser_desc, s.ser_inqr_cnt, s.ser_lik_cnt, s.ser_rep_cnt, s.ser_post_cnt
               FROM series s
                        LEFT JOIN channel c on s.chnl_id = c.chnl_id
