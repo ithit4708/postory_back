@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,9 @@ public class ProfileController {
 
             //user와 channel을 join한 정보와 소유한 channel을 모두 가져오기 위한 List 사용
             List<ProfileChannelDto> list = profileService.getProfileChannel(user.getUserId());
+            if (list.get(0) == null) {
+                list = new ArrayList<>();
+            }
 
             //가져온 user 정보와 channel 정보를 map에 저장.
             userChannelMap.put("user", userInfo);
