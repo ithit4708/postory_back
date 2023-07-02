@@ -14,43 +14,28 @@
     </select>
 
     <select id="findProfileChannelByNic" parameterType="String" resultType="ProfileChannelDto">
-        SELECT c.chnl_img_path, c.chnl_ttl, c.suber_cnt, c.chnl_intro, c.chnl_uri
+        SELECT c.chnl_img_path, c.chnl_ttl, c.suber_cnt, c.chnl_intro, c.chnl_uri, c.CHNL_ID
         FROM user u
-                 LEFT JOIN channel c
-                           ON u.user_id = c.crt_id
-        WHERE u.user_id = #{user_id};
+                 LEFT JOIN channel c ON u.user_id = c.crt_id
+        WHERE u.user_id = #{user_id}
+        ORDER BY c.CHNL_OPEN_DTM DESC;
     </select>
 
     <select id="findProfilePostsByUserId" parameterType="Map" resultType="ProfilePostsDto">
-        SELECT s.SER_TTL,
-               p.POST_TTL,
-               p.POST_SB_TTL,
-               p.POST_REP_CNT,
-               p.POST_INQR_CNT,
-               p.POST_LIK_CNT,
-               p.POST_PBLC_DTM,
-               p.POST_THUMN_PATH
-        FROM (SELECT p.POST_TTL,
-                     p.POST_SB_TTL,
-                     p.POST_REP_CNT,
-                     p.POST_INQR_CNT,
-                     p.POST_LIK_CNT,
-                     p.POST_PBLC_DTM,
-                     p.POST_THUMN_PATH,
-                     p.SER_ID
-              FROM post p
-                       LEFT JOIN channel c ON p.CHNL_ID = c.CHNL_ID
-              WHERE c.CRT_ID = #{userId}) p
+        SELECT s.SER_TTL, p.POST_TTL, p.POST_SB_TTL, p.POST_REP_CNT,p.POST_INQR_CNT, p.POST_LIK_CNT,p.POST_PBLC_DTM, p.POST_THUMN_PATH, p.POST_ID
+        FROM post p
+                 INNER JOIN channel c ON p.CHNL_ID = c.CHNL_ID
                  LEFT JOIN series s ON p.SER_ID = s.SER_ID
+        WHERE c.CRT_ID = #{userId}
         ORDER BY p.POST_PBLC_DTM DESC
         LIMIT #{offset}, 5;
     </select>
 
     <select id="findProfileSeriesByUserId" parameterType="Map" resultType="ProfileSeriseDto">
-        SELECT s.ser_thumn_path, s.ser_ttl, s.ser_desc, s.ser_inqr_cnt, s.ser_lik_cnt, s.ser_rep_cnt, s.ser_post_cnt
-              FROM series s
-                       LEFT JOIN channel c on s.chnl_id = c.chnl_id
-              where c.crt_id = #{userId}
+        SELECT s.ser_thumn_path, s.ser_ttl, s.ser_desc, s.ser_inqr_cnt, s.ser_lik_cnt, s.ser_rep_cnt, s.ser_post_cnt, s.SER_ID
+        FROM series s
+                 LEFT JOIN channel c on s.chnl_id = c.chnl_id
+        where c.crt_id = #{userId}
         ORDER BY s.ser_open_dtm DESC
         LIMIT #{offset}, 5;
     </select>
