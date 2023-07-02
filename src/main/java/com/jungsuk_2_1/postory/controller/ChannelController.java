@@ -45,8 +45,9 @@ public class ChannelController{
                     channelUser(user).
                     channelSerieses(serieses).
                     build();
-            List<ChannelHomeDataDto> data = new ArrayList<>();
-            data.add(channelHomeDto);
+//            List<ChannelHomeDataDto> data = new ArrayList<>();
+            Map<String, Object>  data = new HashMap<>();
+            data.put("data", channelHomeDto);
 
             return ResponseEntity.ok().body(data);
         }catch (Exception e){
@@ -80,14 +81,16 @@ public class ChannelController{
             ChannelDto channel = channelService.retrieve(chnlUri);
             ChannelUserDto user = channelService.getUserByChannelUri(chnlUri);
 
-            ChannelPostDataDto channelSeriesDataDto = ChannelPostDataDto.
+            ChannelPostDataDto channelPostDataDto = ChannelPostDataDto.
                     builder().
                     channel(channel).
                     channelUser(user).
                     channelPosts(posts).
                     build();
-            List<ChannelPostDataDto> data = new ArrayList<>();
-            data.add(channelSeriesDataDto);
+//            List<ChannelPostDataDto> data = new ArrayList<>();
+//            data.add(channelSeriesDataDto);
+            Map<String, Object>  data = new HashMap<>();
+            data.put("data", channelPostDataDto);
 
             return ResponseEntity.ok().body(data);
         }catch (Exception e){
@@ -99,7 +102,7 @@ public class ChannelController{
     }
 
     @GetMapping("/{chnlUri}/series")
-    public ResponseEntity<?> retrieveSeries(@PathVariable String chnlUri, @RequestParam(required = false, value = "count", defaultValue = "1") int page, @RequestParam(required = false, defaultValue = "default") String orderMethod, @RequestParam(required = false, value = "count", defaultValue = "12") int pageSize){
+    public ResponseEntity<?> seriesList(@PathVariable String chnlUri, @RequestParam(required = false, value = "count", defaultValue = "1") int page, @RequestParam(required = false, defaultValue = "default") String orderMethod, @RequestParam(required = false, value = "count", defaultValue = "12") int pageSize){
         try {
             List<ChannelSeriesDto> serieses = seriesService.getSeriesByChnlUri(chnlUri, page, orderMethod, pageSize);
             ChannelDto channel = channelService.retrieve(chnlUri);
@@ -110,8 +113,9 @@ public class ChannelController{
                     channelUser(user).
                     channelSerieses(serieses).
                     build();
-            List<ChannelSeriesDataDto> data = new ArrayList<>();
-            data.add(channelSeriesDataDto);
+
+            Map<String, Object>  data = new HashMap<>();
+            data.put("data", channelSeriesDataDto);
 
             return ResponseEntity.ok().body(data);
         }catch (Exception e){
@@ -128,9 +132,9 @@ public class ChannelController{
             ChannelDto channel = channelService.retrieve(chnlUri);
             ChannelUserDto user = channelService.getUserByChannelUri(chnlUri);
             AboutDataDto about = AboutDataDto.builder().channel(channel).user(user).build();
-            List<AboutDataDto> data = new ArrayList<>();
-            data.add(about);
 
+            Map<String, Object>  data = new HashMap<>();
+            data.put("data", about);
             return ResponseEntity.ok().body(data);
 
         } catch (Exception e) {
@@ -140,4 +144,21 @@ public class ChannelController{
             return ResponseEntity.badRequest().body(error);
         }
     }
+
+    @GetMapping("/{chnlUri}/series/{serId]")
+    public ResponseEntity<?> retrieveSeries(@PathVariable String chnlUri, @PathVariable Integer serId){
+
+        try{
+            Map<String, Object>  data = new HashMap<>();
+            data.put("data", "");
+            return ResponseEntity.ok().body(data);
+
+        } catch (Exception e) {
+            Map error = new HashMap();
+            error.put("errMsg",e.getMessage());
+
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+
 }

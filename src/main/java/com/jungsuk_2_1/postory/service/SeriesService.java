@@ -69,8 +69,6 @@ public class SeriesService {
 
     public StudioSeriesDto updateSeries(String userId, Integer seriesId, SeriesDto seriesDto) {
 
-        System.out.println("seriesDto = " + seriesDto);
-
         Map<String, Object> params = new HashMap<>();
         params.put("serId", seriesId);
         params.put("serThumnPath", seriesDto.getSerThumnPath());
