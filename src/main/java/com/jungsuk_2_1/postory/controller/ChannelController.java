@@ -157,6 +157,7 @@ public class ChannelController{
 
             Map<String, Object>  data = new HashMap<>();
             data.put("data", seriesContents);
+
             return ResponseEntity.ok().body(data);
 
         } catch (Exception e) {
