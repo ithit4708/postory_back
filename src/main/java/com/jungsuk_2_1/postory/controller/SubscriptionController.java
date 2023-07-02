@@ -1,16 +1,16 @@
 package com.jungsuk_2_1.postory.controller;
 
-import com.jungsuk_2_1.postory.dto.ProfileUserDto;
-import com.jungsuk_2_1.postory.dto.SubscriptionDto;
-import com.jungsuk_2_1.postory.dto.UserDto;
+import com.jungsuk_2_1.postory.dto.ChannelDto;
+import com.jungsuk_2_1.postory.dto.SubscriptionChannelDto;
+import com.jungsuk_2_1.postory.dto.SubscriptionPostDto;
 import com.jungsuk_2_1.postory.service.SubscriptionService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,17 +20,18 @@ import java.util.Map;
 @RequestMapping("/subscriptions")
 public class SubscriptionController {
     SubscriptionService subscriptionService;
+
     @Autowired
-    SubscriptionController(SubscriptionService subscriptionService){
+    SubscriptionController(SubscriptionService subscriptionService) {
         this.subscriptionService = subscriptionService;
     }
 
     @PostMapping
-    public ResponseEntity<?> doSubscription(@AuthenticationPrincipal String userId, @RequestBody SubscriptionDto chnlId) {
+    public ResponseEntity<?> doSubscription(@AuthenticationPrincipal String userId, @RequestBody ChannelDto chnlId) {
         Map<String, Object> subInfoMap = new HashMap<>();
-        subInfoMap.put("userId",userId);
-        subInfoMap.put("chnlId",chnlId.getChnlId());
-        log.warn("subInfoMap = {}",subInfoMap);
+        subInfoMap.put("userId", userId);
+        subInfoMap.put("chnlId", chnlId.getChnlId());
+        log.warn("subInfoMap = {}", subInfoMap);
 
         subscriptionService.addToSubscriptionList(subInfoMap);
 
@@ -38,50 +39,34 @@ public class SubscriptionController {
     }
 
     @DeleteMapping("/cancle")
-    public ResponseEntity<?> cancleSubscription(@AuthenticationPrincipal String userId, @RequestBody SubscriptionDto chnlId){
+    public ResponseEntity<?> cancleSubscription(@AuthenticationPrincipal String userId, @RequestBody ChannelDto chnlId) {
         Map<String, Object> subCancleInfoMap = new HashMap<>();
-        subCancleInfoMap.put("userId",userId);
-        subCancleInfoMap.put("chnlId",chnlId.getChnlId());
-        log.warn("subCancleInfoMap = {}",subCancleInfoMap);
+        subCancleInfoMap.put("userId", userId);
+        subCancleInfoMap.put("chnlId", chnlId.getChnlId());
+        log.warn("subCancleInfoMap = {}", subCancleInfoMap);
 
         subscriptionService.removeFromSubscriptionList(subCancleInfoMap);
 
         return ResponseEntity.ok().body(null);
     }
 
-//    @GetMapping
-//    public ResponseEntity<?> retrieveSubscriptionList(@AuthenticationPrincipal String userId) {
-//
-//    }
-//    @GetMapping("channel")
-//private Map<String, Object> getSubscriptionData(Integer page, String userId, boolean isPosts) {
-//    if (profileService.getUserByNickname(nic) == null) {
-//        throw new RuntimeException("존재하지않는 프로필입니다.");
-//    }
-//
-//    UserDto user = profileService.getUserByNickname(nic);
-//    ProfileUserDto userInfo = profileService.getProfileUser(nic);
-//
-//    if (page == null || page == 0) {
-//        page = 1;
-//    }
-//
-//    int offset = (page - 1) * 10;
-//    Map<String, Object> dataMap = new HashMap<>();
-//    dataMap.put("userId", user.getUserId());
-//    dataMap.put("offset", offset);
-//
-//    List<?> dataList;
-//    if (isPosts) {
-//        dataList = profileService.getProfilePosts(dataMap);
-//    } else {
-//        dataList = profileService.getProfileSerise(dataMap);
-//    }
-//
-//    Map<String, Object> response = new HashMap<>();
-//    response.put("user", userInfo);
-//    response.put(isPosts ? "posts" : "series", dataList);
-//
-//    return response;
-//}
+    @GetMapping
+    public ResponseEntity<?> retrieveSubscriptionPostList(@AuthenticationPrincipal String userId) {
+        //로그인한 유저의 uuid로 유저가 구독한 채널의 모든 포스트 목록 List 불러오기
+        List<SubscriptionPostDto> subPostList = subscriptionService.getSubscriptionPostList(userId);
+        if (subPostList.get(0) == null) {
+            subPostList = new ArrayList<>();
+        }
+        return ResponseEntity.ok().body(subPostList);
+    }
+
+    @GetMapping("channel")
+    public ResponseEntity<?> retrieveSubscriptionChannelList(@AuthenticationPrincipal String userId) {
+        //로그인한 유저의 uuid로 유저가 구독한 모든 채널의 목록 불러오기
+        List<SubscriptionChannelDto> subChannelList = subscriptionService.getSubscriptionChannelList(userId);
+        if (subChannelList.get(0) == null) {
+            subChannelList = new ArrayList<>();
+        }
+        return ResponseEntity.ok().body(subChannelList);
+    }
 }
