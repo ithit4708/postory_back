@@ -11,4 +11,24 @@
     <delete id="deleteSubscription" parameterType="Map">
         DELETE FROM subscription WHERE USER_ID=#{userId} AND CHNL_ID=#{chnlId}
     </delete>
+
+    <select id="selectSubscriptionPost" parameterType="String" resultType="SubscriptionPostDto">
+        SELECT se.SER_TTL, p.POST_TTL, p.POST_SB_TTL, p.POST_THUMN_PATH, u.USER_IMG_PATH, u.NIC, p.POST_INQR_CNT, p.POST_LIK_CNT, p.POST_PBLC_DTM, p.POST_ID, c.CHNL_URI, c.CHNL_ID
+        FROM subscription s
+                 INNER JOIN post p ON s.CHNL_ID = p.CHNL_ID
+                 LEFT JOIN series se ON p.SER_ID = se.SER_ID
+                 INNER JOIN channel c ON p.CHNL_ID = c.CHNL_ID
+                 INNER JOIN user u ON c.CRT_ID = u.USER_ID
+        WHERE s.USER_ID = #{userId}
+        ORDER BY p.POST_PBLC_DTM DESC;
+    </select>
+
+    <select id="selectSubscriptionChannel" parameterType="String" resultType="SubscriptionChannelDto">
+        SELECT c.CHNL_IMG_PATH, c.CHNL_TTL, c.CHNL_INTRO, u.USER_IMG_PATH, u.NIC, c.CHNL_URI, c.CHNL_ID
+        FROM subscription s
+                 INNER JOIN channel c ON s.CHNL_ID = c.CHNL_ID
+                 INNER JOIN user u ON c.CRT_ID = u.USER_ID
+        WHERE s.USER_ID = #{userId}
+        ORDER BY s.SUBR_DTM DESC;
+    </select>
 </mapper>
