@@ -15,4 +15,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     public void addToSubscriptionList(Map<String, Object> subInfo) {
         subscriptionDao.insertSubscription(subInfo);
     }
+
+    @Override
+    public void removeFromSubscriptionList(Map<String, Object> subCancleInfo) {
+        subscriptionDao.deleteSubscription(subCancleInfo);
+    }
 }

@@ -7,4 +7,5 @@ import java.util.Map;
 @Mapper
 public interface SubscriptionDao {
     void insertSubscription(Map<String, Object> subInfo);
+    void deleteSubscription(Map<String, Object> subCancleInfo);
 }

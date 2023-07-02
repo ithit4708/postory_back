@@ -4,4 +4,6 @@ import java.util.Map;
 
 public interface SubscriptionService {
     void addToSubscriptionList(Map<String, Object> subInfo);
+
+    void removeFromSubscriptionList(Map<String, Object> subCancleInfo);
 }

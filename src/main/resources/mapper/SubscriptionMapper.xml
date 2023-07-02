@@ -7,4 +7,8 @@
         SELECT next_id, #{userId}, #{chnlId}, now()
         FROM (SELECT IFNULL(MAX(SUBR_ID), 0) + 1 AS next_id FROM subscription) AS tmp;
     </insert>
+
+    <delete id="deleteSubscription" parameterType="Map">
+        DELETE FROM subscription WHERE USER_ID=#{userId} AND CHNL_ID=#{chnlId}
+    </delete>
 </mapper>
