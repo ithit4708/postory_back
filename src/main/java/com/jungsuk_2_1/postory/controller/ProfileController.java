@@ -31,17 +31,18 @@ public class ProfileController {
                 throw new RuntimeException("존재하지않는 프로필입니다.");
             }
             //PathVariable로 넘어온 유저의 nic을 받아와서 DB에서 해당하는 유저의 정보 찾기.
-            UserDto user = profileService.getUserByNickname(nic);
+            UserDto profileUser = profileService.getUserByNickname(nic);
             //응답 형태 : Map
             Map<String, Object> userChannelMap = new HashMap<>();
             //Profile에 필요한 User 정보만 가져오는 ProfileUserDto에 정보 담기
             ProfileUserDto userInfo = profileService.getProfileUser(nic);
 
             //user와 channel을 join한 정보와 소유한 channel을 모두 가져오기 위한 List 사용
-            List<ProfileChannelDto> channelList = profileService.getProfileChannel(user.getUserId());
-            if (channelList.get(0) == null) {
-                channelList = new ArrayList<>();
-            }
+            Map<String, String> isSubsedMap = new HashMap<>();
+            isSubsedMap.put("userId",userId);
+            isSubsedMap.put("profileUserId",profileUser.getUserId());
+
+            List<ProfileChannelDto> channelList = profileService.getProfileChannel(isSubsedMap);
 
             //가져온 user 정보와 channel 정보를 map에 저장.
             userChannelMap.put("user", userInfo);
@@ -93,8 +94,8 @@ public class ProfileController {
             throw new RuntimeException("존재하지않는 프로필입니다.");
         }
 
-        UserDto user = profileService.getUserByNickname(nic);
-        ProfileUserDto userInfo = profileService.getProfileUser(nic);
+        UserDto profileUser = profileService.getUserByNickname(nic);
+        ProfileUserDto profileUserInfo = profileService.getProfileUser(nic);
 
         if (page == null || page == 0) {
             page = 1;
@@ -102,7 +103,7 @@ public class ProfileController {
 
         int offset = (page - 1) * 10;
         Map<String, Object> dataMap = new HashMap<>();
-        dataMap.put("userId", user.getUserId());
+        dataMap.put("userId", profileUser.getUserId());
         dataMap.put("offset", offset);
 
         List<?> dataList;
@@ -112,16 +113,9 @@ public class ProfileController {
             dataList = profileService.getProfileSerise(dataMap);
         }
 
-        //user와 channel을 join한 정보와 소유한 channel을 모두 가져오기 위한 List 사용
-        List<ProfileChannelDto> channelList = profileService.getProfileChannel(user.getUserId());
-        if (channelList.get(0) == null) {
-            channelList = new ArrayList<>();
-        }
-
         Map<String, Object> response = new HashMap<>();
-        response.put("user", userInfo);
+        response.put("user", profileUserInfo);
         response.put(isPosts ? "posts" : "series", dataList);
-        response.put("channel",channelList);
 
         return response;
     }

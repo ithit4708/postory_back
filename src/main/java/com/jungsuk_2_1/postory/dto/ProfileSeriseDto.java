@@ -18,4 +18,5 @@ public class ProfileSeriseDto {
     private String serRepCnt;
     private String serPostCnt;
     private String serId;
+    private String nic;
 }

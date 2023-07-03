@@ -10,11 +10,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class SubscriptionChannelDto {
-    String chnlUri;
-    String chnlId;
-    String chnlImgPath;
-    String chnlTtl;
-    String chnlIntro;
-    String userImgPath;
-    String nic;
+    private String chnlUri;
+    private String chnlId;
+    private String chnlImgPath;
+    private String chnlTtl;
+    private String chnlIntro;
+    private String userImgPath;
+    private String nic;
+    private Boolean isSubsed;
 }
