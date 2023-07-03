@@ -38,14 +38,14 @@ public class ProfileController {
             ProfileUserDto userInfo = profileService.getProfileUser(nic);
 
             //user와 channel을 join한 정보와 소유한 channel을 모두 가져오기 위한 List 사용
-            List<ProfileChannelDto> list = profileService.getProfileChannel(user.getUserId());
-            if (list.get(0) == null) {
-                list = new ArrayList<>();
+            List<ProfileChannelDto> channelList = profileService.getProfileChannel(user.getUserId());
+            if (channelList.get(0) == null) {
+                channelList = new ArrayList<>();
             }
 
             //가져온 user 정보와 channel 정보를 map에 저장.
             userChannelMap.put("user", userInfo);
-            userChannelMap.put("channel", list);
+            userChannelMap.put("channel", channelList);
 
             return ResponseEntity.ok().body(userChannelMap);
         } catch (Exception e) {
@@ -112,9 +112,16 @@ public class ProfileController {
             dataList = profileService.getProfileSerise(dataMap);
         }
 
+        //user와 channel을 join한 정보와 소유한 channel을 모두 가져오기 위한 List 사용
+        List<ProfileChannelDto> channelList = profileService.getProfileChannel(user.getUserId());
+        if (channelList.get(0) == null) {
+            channelList = new ArrayList<>();
+        }
+
         Map<String, Object> response = new HashMap<>();
         response.put("user", userInfo);
         response.put(isPosts ? "posts" : "series", dataList);
+        response.put("channel",channelList);
 
         return response;
     }

@@ -18,7 +18,7 @@
         FROM user u
                  LEFT JOIN channel c ON u.user_id = c.crt_id
         WHERE u.user_id = #{user_id}
-        ORDER BY c.CHNL_OPEN_DTM DESC;
+        ORDER BY c.CHNL_OPEN_DTM;
     </select>
 
     <select id="findProfilePostsByUserId" parameterType="Map" resultType="ProfilePostsDto">
@@ -36,7 +36,7 @@
         FROM series s
                  LEFT JOIN channel c on s.chnl_id = c.chnl_id
         where c.crt_id = #{userId}
-        ORDER BY s.ser_open_dtm DESC
+        ORDER BY s.ser_open_dtm
         LIMIT #{offset}, 5;
     </select>
 </mapper>
