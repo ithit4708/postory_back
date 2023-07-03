@@ -19,7 +19,7 @@
 
     <update id="updateNextPostId" parameterType="map">
         update post
-            set NEXT_POST_ID = #{nextPostId}
+        set NEXT_POST_ID = #{nextPostId}
         where POST_ID = #{postId}
     </update>
 
@@ -60,6 +60,62 @@
         where POST_ID = #{postId};
     </update>
 
+    <update id="increaseViewCount" parameterType="String">
+        UPDATE post
+        SET POST_INQR_CNT = POST_INQR_CNT + 1
+        WHERE POST_ID = #{postId}
+    </update>
+
+
+    <select id="checkUser" parameterType="map" resultType="boolean">
+        SELECT
+            CASE
+                WHEN EXISTS (
+                             SELECT
+                                 1
+                             FROM
+                                 purchase
+                             WHERE
+                                 USER_ID = #{userId}
+                               AND POST_ID = #{postId}
+                         )
+                    OR EXISTS (
+                             SELECT
+                                 1
+                             FROM
+                                 post p
+                                     INNER JOIN channel c ON p.CHNL_ID = c.CHNL_ID
+                             WHERE
+                                 p.POST_ID = #{postId}
+                               AND c.CRT_ID = #{userId}
+                         )
+                    THEN true
+                ELSE false
+                END AS result
+    </select>
+
+    <select id="fingPostsBySerId" parameterType="map" resultType="ChannelPostDto">
+        SELECT p.*, s.SER_TTL, cd.CD_NM as nowPostStusCdNm , u.NIC, tb.STYLE_TEXT
+        FROM post AS p
+        INNER JOIN channel AS c ON p.CHNL_ID = c.CHNL_ID
+        INNER JOIN common_code as cd ON p.NOW_POST_STUS_CD = cd.CD
+        LEFT JOIN series as s ON p.SER_ID = s.SER_ID
+        INNER JOIN user as u ON c.CRT_ID = u.USER_ID
+        LEFT JOIN block as b ON b.POST_ID = p.POST_ID
+        LEFT JOIN text_block as tb ON tb.BLK_ID = b.BLK_ID AND b.BLK_KIND_CD =
+        (SELECT CD FROM common_code WHERE CD_NM = '텍스트블록')
+        WHERE s.SER_ID = #{serId}
+        <choose>
+            <when test="orderMethod == 'latest'">
+                ORDER BY p.POST_PBLC_DTM DESC
+            </when>
+            <when test="orderMethod == 'popularity'">
+                ORDER BY p.POST_LIK_CNT DESC
+            </when>
+        </choose>
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
     <delete id="deletePost" parameterType="Integer">
         delete from post
         where POST_ID = #{postId}
@@ -85,16 +141,16 @@
         LEFT JOIN text_block as tb ON tb.BLK_ID = b.BLK_ID AND b.BLK_KIND_CD =
         (SELECT CD FROM common_code WHERE CD_NM = '텍스트블록')
         WHERE c.CHNL_URI = #{chnlUri}
-            <choose>
-                <when test="orderMethod == 'latest'">
-                    ORDER BY p.POST_PBLC_DTM DESC
-                </when>
-                <when test="orderMethod == 'popularity'">
-                    ORDER BY p.POST_LIK_CNT DESC
-                </when>
-            </choose>
-            LIMIT #{pageSize} OFFSET #{offset}
-        </select>
+        <choose>
+            <when test="orderMethod == 'latest'">
+                ORDER BY p.POST_PBLC_DTM DESC
+            </when>
+            <when test="orderMethod == 'popularity'">
+                ORDER BY p.POST_LIK_CNT DESC
+            </when>
+        </choose>
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
 
     <select id="findLastId" resultType="Integer">
         SELECT MAX(POST_ID) FROM post
@@ -180,8 +236,14 @@
         where p.SER_ID = #{serId}
     </select>
     <select id="findIdByChnlId" resultType="OnlyIdDto">
-       select POST_ID
+        select POST_ID
         from post
         where CHNL_ID = #{chnlId}
+    </select>
+
+    <select id="findByIdInContent" resultType="ContentPostDto">
+        select p.*
+        from post as p
+        where post_id = #{postId}
     </select>
 </mapper>

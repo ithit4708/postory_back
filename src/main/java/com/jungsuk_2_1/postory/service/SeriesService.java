@@ -93,4 +93,15 @@ public class SeriesService {
         seriesDao.deleteSeries(serId);
         return seriesDao.doesExist(serId);
     }
+
+    public SeriesDto retrieveSeries(Integer serId, int page, String orderMethod, int pageSize) {
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", "seriesPosts");
+        params.put("serId", serId);
+        params.put("pageSize", pageSize);
+        params.put("offset", (page - 1) * pageSize);
+        params.put("orderMethod", orderMethod);
+        return seriesDao.findByIdInChnl(params);
+    }
 }

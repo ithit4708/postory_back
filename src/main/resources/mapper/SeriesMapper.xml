@@ -110,4 +110,43 @@
         from series as s
         where s.CHNL_ID = (select CHNL_ID from channel where CHNL_URI = #{chnlUri})
     </select>
+
+    <select id="findByIdInChnl" parameterType="map" resultType="SeriesDto">
+        SELECT
+            s.ser_id,
+            s.ser_thumn_path,
+            s.ser_ttl,
+            s.ser_desc,
+            s.ser_open_dtm,
+            s.ser_inqr_cnt,
+            s.ser_lik_cnt,
+            s.ser_rep_cnt,
+            s.ser_post_cnt,
+            s.chnl_dsgnt_ser_odr,
+            s.recen_pblc_post_id,
+            s.chnl_id,
+            cc.cd_nm as serStusCdNm,
+            s.ser_stus_chg_dtm,
+            c.chnl_uri,
+            u.nic as userNic
+        FROM
+            series AS s
+                INNER JOIN common_code as cc on s.ser_stus_cd = cc.cd
+                INNER JOIN channel as c on s.chnl_id = c.chnl_id
+                INNER JOIN user as u on c.crt_id = u.user_id
+        WHERE ser_id = #{serId};
+        <choose>
+            <when test="orderMethod == 'default'">
+                ORDER BY s.CHNL_DSGNT_SER_ODR DESC
+            </when>
+            <when test="orderMethod == 'latest'">
+                ORDER BY s.SER_OPEN_DTM DESC
+            </when>
+            <when test="orderMethod == 'popularity'">
+                ORDER BY s.SER_LIK_CNT DESC
+            </when>
+        </choose>
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
 </mapper>

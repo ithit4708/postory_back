@@ -56,4 +56,7 @@ public class SeriesDto {
     private String serStusChgDtm;
 
     private String chnlUri;
+
+    private String crtNic;
+
 }

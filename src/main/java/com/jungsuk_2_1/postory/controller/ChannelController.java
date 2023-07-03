@@ -146,11 +146,17 @@ public class ChannelController{
     }
 
     @GetMapping("/{chnlUri}/series/{serId]")
-    public ResponseEntity<?> retrieveSeries(@PathVariable String chnlUri, @PathVariable Integer serId){
+    public ResponseEntity<?> retrieveSeries(@PathVariable String chnlUri, @PathVariable Integer serId,@RequestParam(required = false, value="count", defaultValue = "1") int page, @RequestParam(required = false, defaultValue = "latest") String orderMethod,@RequestParam(required = false, value = "count", defaultValue = "12") int pageSize){
 
         try{
+
+            SeriesDto series = seriesService.retrieveSeries(serId,page,orderMethod,pageSize);
+            List<ChannelPostDto> posts = postService.getPostsBySerId(serId);
+            ChannelUserDto user = channelService.getUserByChannelUri(chnlUri);
+            SeriesContensDataDto seriesContents = SeriesContensDataDto.builder().series(series).posts(posts).user(user).build();
+
             Map<String, Object>  data = new HashMap<>();
-            data.put("data", "");
+            data.put("data", seriesContents);
             return ResponseEntity.ok().body(data);
 
         } catch (Exception e) {
@@ -159,6 +165,24 @@ public class ChannelController{
 
             return ResponseEntity.badRequest().body(error);
         }
+    }
+
+    @GetMapping("/{chnlUri}/post/{postId}")
+    public ResponseEntity<?> retrievePost(@AuthenticationPrincipal String userId, @PathVariable String chnlUri, @PathVariable Integer postId){
+
+        try {
+            ContentPostDto post = postService.readPostById(userId, postId);
+            Map<String, Object> data = new HashMap<>();
+            data.put("data", "");
+
+            return ResponseEntity.ok().body(data);
+        } catch (Exception e){
+            Map error = new HashMap();
+            error.put("errMsg", e.getMessage());
+
+            return ResponseEntity.badRequest().body(error);
+        }
+
     }
 
 }
