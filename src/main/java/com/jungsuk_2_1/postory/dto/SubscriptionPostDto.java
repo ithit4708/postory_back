@@ -12,17 +12,18 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 public class SubscriptionPostDto {
-    String chnlUri;
-    String chnlId;
-    String postId;
-    String serTtl;
-    String postTtl;
-    String postSbTtl;
-    String postContent;
-    String postThumnPath;
-    String userImgPath;
-    String Nic;
-    int postInqrCnt;
-    int postLikCnt;
-    Date postPblcDtm;
+    private String chnlUri;
+    private String chnlId;
+    private String postId;
+    private String serTtl;
+    private String postTtl;
+    private String postSbTtl;
+    private String postContent;
+    private String postThumnPath;
+    private String userImgPath;
+    private String Nic;
+    private int postInqrCnt;
+    private int postLikCnt;
+    private int postRepCnt;
+    private Date postPblcDtm;
 }

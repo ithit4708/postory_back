@@ -16,4 +16,5 @@ public class ProfileChannelDto {
     private String chnlIntro;
     private String chnlUri;
     private String chnlId;
+    private Boolean isSubsed;
 }

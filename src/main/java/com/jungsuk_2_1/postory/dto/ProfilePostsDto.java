@@ -12,6 +12,9 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProfilePostsDto {
+    private String chnlId;
+    private String serId;
+    private String postId;
     private String serTtl;
     private String postTtl;
     private String postSbTtl;
@@ -21,5 +24,6 @@ public class ProfilePostsDto {
     private int postLikCnt;
     private Date postPblcDtm;
     private String postThumnPath;
-    private String postId;
+    private String userImgPath;
+    private String nic;
 }
