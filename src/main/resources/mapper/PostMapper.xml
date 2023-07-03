@@ -151,7 +151,6 @@
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
-
     <select id="findLastId" resultType="Integer">
         SELECT MAX(POST_ID) FROM post
     </select>
