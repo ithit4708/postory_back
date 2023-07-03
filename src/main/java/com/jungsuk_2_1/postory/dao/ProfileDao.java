@@ -10,10 +10,11 @@ import java.util.Map;
 public interface ProfileDao {
     UserDto findUserByNickname(String nic);
 
-    List<ProfileChannelDto> findProfileChannelByNic(String userId);
+    List<ProfileChannelDto> findProfileChannelByNic(Map<String,String> isSubsedMap);
 
     ProfileUserDto findProfileUserByNic(String nic);
 
     List<ProfilePostsDto> findProfilePostsByUserId(Map<String,Object> postInfoMap);
     List<ProfileSeriseDto> findProfileSeriesByUserId(Map<String,Object> seriesInfoMap);
+    Boolean existsChannelByUserId(String userId);
 }

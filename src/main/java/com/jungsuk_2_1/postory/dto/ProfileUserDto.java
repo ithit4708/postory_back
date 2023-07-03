@@ -13,4 +13,5 @@ public class ProfileUserDto {
     private String nic;
     private String userImgPath;
     private String userIntro;
+    private Boolean hasChannel;
 }

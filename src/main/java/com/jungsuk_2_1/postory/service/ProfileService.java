@@ -8,7 +8,7 @@ import java.util.Map;
 public interface ProfileService {
     UserDto getUserByNickname(String nic);
 
-    List<ProfileChannelDto> getProfileChannel(String userId);
+    List<ProfileChannelDto> getProfileChannel(Map<String,String> isSubsedMap);
 
     ProfileUserDto getProfileUser(String nic);
 
