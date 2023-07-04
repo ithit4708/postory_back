@@ -1,13 +1,16 @@
 package com.jungsuk_2_1.postory.controller;
 
 import com.jungsuk_2_1.postory.dto.PostDto;
+import com.jungsuk_2_1.postory.dto.SubscriptionPostDto;
 import com.jungsuk_2_1.postory.service.ScrapService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -44,6 +47,10 @@ public class ScrapController {
 
 //    @GetMapping
 //    public ResponseEntity<?> retrieveScrapPostList(@AuthenticationPrincipal String userId) {
-//
+//        List<SubscriptionPostDto> subPostList = subscriptionService.getSubscriptionPostList(userId);
+//        if (subPostList.get(0) == null) {
+//            subPostList = new ArrayList<>();
+//        }
+//        return ResponseEntity.ok().body(subPostList);
 //    }
 }
