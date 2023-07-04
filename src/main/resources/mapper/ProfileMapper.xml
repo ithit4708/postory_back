@@ -19,7 +19,7 @@
 
     <select id="findProfileChannelByNic" parameterType="Map" resultType="ProfileChannelDto">
         SELECT c.chnl_img_path, c.chnl_ttl, c.suber_cnt, c.chnl_intro, c.chnl_uri, c.CHNL_ID,
-               CASE WHEN s.user_id IS NOT NULL THEN 1 ELSE 0 END AS isSubsed
+               CASE WHEN s.user_id IS NOT NULL THEN 1 ELSE 0 END AS isSubsed, c.SUBER_CNT
         FROM user u
                  INNER JOIN channel c ON u.user_id = c.crt_id
                  LEFT JOIN subscription s ON #{userId} = s.user_id AND c.CHNL_ID = s.CHNL_ID
