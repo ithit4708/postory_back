@@ -143,6 +143,8 @@
             c.YTB_URL,
             c.TWCH_URL,
             c.CHNL_STUS_CHG_DTM,
+            c.CHNL_SB_TTL,
+            c.CHNL_INTRO,
             (SELECT COUNT(*) FROM post as p WHERE p.CHNL_ID = c.CHNL_ID AND (now_post_stus_cd ='ST00420' OR now_post_stus_cd = 'ST00430')) as chnlPostCnt
         FROM
             channel as c

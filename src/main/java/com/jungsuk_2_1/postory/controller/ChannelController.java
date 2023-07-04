@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("channel")
+@RequestMapping("/channel")
 public class ChannelController{
 
     private final ChannelService channelService;
@@ -74,7 +74,8 @@ public class ChannelController{
     }
 
     @GetMapping("/{chnlUri}/posts")
-    public ResponseEntity<?> retrievePosts(@PathVariable String chnlUri, @RequestParam(required = false, value="count", defaultValue = "1") int page, @RequestParam(required = false, defaultValue = "latest") String orderMethod,@RequestParam(required = false, value = "count", defaultValue = "12") int pageSize){
+    public ResponseEntity<?> retrievePosts(@PathVariable String chnlUri,@RequestParam(required = false, value = "page", defaultValue = "1") int page, @RequestParam(required = false, defaultValue = "latest") String orderMethod,@RequestParam(required = false, value = "count", defaultValue = "12") int pageSize){
+        System.out.println("page = " + page);
 
         try {
             List<ChannelPostDto> posts = postService.getPostsByChnlUri(chnlUri, page, orderMethod,pageSize);
@@ -102,7 +103,8 @@ public class ChannelController{
     }
 
     @GetMapping("/{chnlUri}/series")
-    public ResponseEntity<?> seriesList(@PathVariable String chnlUri, @RequestParam(required = false, value = "count", defaultValue = "1") int page, @RequestParam(required = false, defaultValue = "default") String orderMethod, @RequestParam(required = false, value = "count", defaultValue = "12") int pageSize){
+    public ResponseEntity<?> seriesList(@PathVariable String chnlUri, @RequestParam(required = false, value = "page", defaultValue = "1") int page
+            , @RequestParam(required = false, defaultValue = "default") String orderMethod, @RequestParam(required = false, value = "count", defaultValue = "12") int pageSize){
         try {
             List<ChannelSeriesDto> serieses = seriesService.getSeriesByChnlUri(chnlUri, page, orderMethod, pageSize);
             ChannelDto channel = channelService.retrieve(chnlUri);

@@ -1,6 +1,7 @@
 package com.jungsuk_2_1.postory.service;
 
 import com.jungsuk_2_1.postory.dao.PostDao;
+import com.jungsuk_2_1.postory.dao.PostTagDao;
 import com.jungsuk_2_1.postory.dao.SeriesDao;
 import com.jungsuk_2_1.postory.dto.*;
 import lombok.extern.slf4j.Slf4j;
@@ -16,11 +17,13 @@ import java.util.Map;
 public class PostService {
   private final PostDao postDao;
   private final SeriesDao seriesDao;
+  private final PostTagDao postTagDao;
 
   @Autowired
-  PostService(PostDao postDao, SeriesDao seriesDao) {
+  PostService(PostDao postDao, SeriesDao seriesDao, PostTagDao postTagDao) {
     this.postDao = postDao;
     this.seriesDao = seriesDao;
+    this.postTagDao = postTagDao;
   }
   public StudioPostDto createPost (String userId, PostDto postDto){
 
@@ -64,9 +67,23 @@ public class PostService {
     args.put("nextPostId", postDao.findLastId());
     postDao.updateNextPostId(args);
 
-    System.out.println("postDao.findByID ="+postDao.findById(newPostId));
+    Map<String, Object> data = new HashMap<>();
+    data.put("name","createPostTag");
+    data.put("postId",newPostId);
+    data.put("postType",postDto.getPostType());
+    postTagDao.createPostTag(data);
 
-    return postDao.findById(newPostId);
+    OnlyIdDto id = postTagDao.findByPostId(newPostId);
+    StudioPostDto dto = postDao.findById(newPostId);
+
+    if (id.getId() == 1) {
+      dto.setPostType("웹소설");
+    } else if (id.getId() == 2){
+      dto.setPostType("웹툰");
+    }
+
+
+    return dto;
   }
 
   public List<ChannelPostDto> getPostsByChnlUri (String chnlUri,int page, String orderMethod,int pageSize){

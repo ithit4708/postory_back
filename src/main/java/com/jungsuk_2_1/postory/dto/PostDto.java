@@ -81,4 +81,6 @@ public class PostDto {
     private String basicParagAlgnCdNm;
 
     private String nowPostStusCdNm;
+
+    private String postType;
 }

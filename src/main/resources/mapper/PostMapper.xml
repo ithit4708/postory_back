@@ -129,8 +129,9 @@
         delete from post
         where SER_ID = #{serId}
     </delete>
+
     <select id="getPostsByChnlUri" parameterType="map" resultType="ChannelPostDto">
-        SELECT p.*, s.SER_TTL, cd.CD_NM as nowPostStusCdNm , u.NIC as userNic, u.USER_IMG_PATH, tb.STYLE_TEXT
+        SELECT p.*, s.SER_TTL, cd.CD_NM as nowPostStusCdNm , u.NIC as userNic, u.USER_IMG_PATH, tb.STYLE_TEXT, tg.TAG_NM as postType
         FROM post AS p
         INNER JOIN channel AS c ON p.CHNL_ID = c.CHNL_ID
         INNER JOIN common_code as cd ON p.NOW_POST_STUS_CD = cd.CD
@@ -139,10 +140,15 @@
         LEFT JOIN block as b ON b.POST_ID = p.POST_ID
         LEFT JOIN text_block as tb ON tb.BLK_ID = b.BLK_ID AND b.BLK_KIND_CD =
         (SELECT CD FROM common_code WHERE CD_NM = '텍스트블록')
+        LEFT JOIN post_tag as pt on p.post_id = pt.post_id
+        LEFT JOIN tag as tg on tg.tag_id = pt.tag_id
         WHERE c.CHNL_URI = #{chnlUri}
         <choose>
             <when test="orderMethod == 'latest'">
-                ORDER BY p.POST_PBLC_DTM DESC
+                ORDER BY
+                p.POST_ID DESC
+--                     p.POST_PBLC_DTM DESC
+
             </when>
             <when test="orderMethod == 'popularity'">
                 ORDER BY p.POST_LIK_CNT DESC

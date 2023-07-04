@@ -68,5 +68,4 @@ public class ChannelDto {
     private String chnlStusChgDtm;
 
     private String crtNic;
-
 }
