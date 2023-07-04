@@ -126,35 +126,33 @@
 
     <select id="findByChnlUri" parameterType="String" resultType="ChannelDto">
         SELECT
-        channel.CHNL_ID,
-        channel.CHNL_TTL,
-        channel.CHNL_INTRO,
-        channel.CHNL_URI,
-        channel.CHNL_SB_TTL,
-        channel.CHNL_IMG_PATH,
-        channel.SUBER_CNT,
-        channel.CHNL_POST_CNT,
-        channel.CHNL_LIK_CNT,
-        channel.CHNL_OPEN_DTM,
-        user1.NIC as crtNic,
-        channel.HMPG_URL,
-        channel.INSTA_URL,
-        channel.GITH_URL,
-        channel.YTB_URL,
-        channel.TWCH_URL,
-        channel.CHNL_STUS_CHG_DTM
+            c.CHNL_ID,
+            c.CHNL_TTL,
+            c.CHNL_INTRO,
+            c.CHNL_URI,
+            c.CHNL_SB_TTL,
+            c.CHNL_IMG_PATH,
+            c.SUBER_CNT,
+            c.CHNL_POST_CNT,
+            c.CHNL_LIK_CNT,
+            c.CHNL_OPEN_DTM,
+            user1.NIC as crtNic,
+            c.HMPG_URL,
+            c.INSTA_URL,
+            c.GITH_URL,
+            c.YTB_URL,
+            c.TWCH_URL,
+            c.CHNL_STUS_CHG_DTM,
+            (SELECT COUNT(*) FROM post as p WHERE p.CHNL_ID = c.CHNL_ID AND (now_post_stus_cd ='ST00420' OR now_post_stus_cd = 'ST00430')) as chnlPostCnt
         FROM
-        channel
-        INNER JOIN
-        user AS user1 ON channel.CRT_ID = user1.USER_ID
-        INNER JOIN
-        common_code ON channel.CHNL_STUS_CD = common_code.CD
-        INNER JOIN
-        user AS user2 ON channel.CHNL_STUS_CHGR_ID = user2.USER_ID
+            channel as c
+                INNER JOIN user AS user1 ON c.CRT_ID = user1.USER_ID
+                INNER JOIN common_code ON c.CHNL_STUS_CD = common_code.CD
+                INNER JOIN user AS user2 ON c.CHNL_STUS_CHGR_ID = user2.USER_ID
         WHERE
-        channel.CHNL_URI = #{chnlUri}
-        AND
-        <include refid="statusCondition"/>
+            c.CHNL_URI = #{chnlUri}
+          AND c.CHNL_STUS_CD = 'ST00210'
+
     </select>
 
     <select id="findIdByChnlUri" parameterType="String" resultType="ChannelSimpleDto">

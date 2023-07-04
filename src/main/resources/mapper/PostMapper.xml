@@ -129,9 +129,8 @@
         delete from post
         where SER_ID = #{serId}
     </delete>
-
     <select id="getPostsByChnlUri" parameterType="map" resultType="ChannelPostDto">
-        SELECT p.*, s.SER_TTL, cd.CD_NM as nowPostStusCdNm , u.NIC, tb.STYLE_TEXT
+        SELECT p.*, s.SER_TTL, cd.CD_NM as nowPostStusCdNm , u.NIC as userNic, u.USER_IMG_PATH, tb.STYLE_TEXT
         FROM post AS p
         INNER JOIN channel AS c ON p.CHNL_ID = c.CHNL_ID
         INNER JOIN common_code as cd ON p.NOW_POST_STUS_CD = cd.CD
@@ -151,6 +150,7 @@
         </choose>
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
+
 
     <select id="findLastId" resultType="Integer">
         SELECT MAX(POST_ID) FROM post

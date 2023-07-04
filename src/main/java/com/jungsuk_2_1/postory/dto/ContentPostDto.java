@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContentPostDto {
-
-
+    Integer postId;
+    String postTtl;
 }

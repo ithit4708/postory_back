@@ -145,7 +145,7 @@ public class ChannelController{
         }
     }
 
-    @GetMapping("/{chnlUri}/series/{serId]")
+    @GetMapping("/{chnlUri}/series/{serId}")
     public ResponseEntity<?> retrieveSeries(@PathVariable String chnlUri, @PathVariable Integer serId,@RequestParam(required = false, value="count", defaultValue = "1") int page, @RequestParam(required = false, defaultValue = "latest") String orderMethod,@RequestParam(required = false, value = "count", defaultValue = "12") int pageSize){
 
         try{
