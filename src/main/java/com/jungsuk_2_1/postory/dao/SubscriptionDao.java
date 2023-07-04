@@ -16,4 +16,5 @@ public interface SubscriptionDao {
     List<SubscriptionPostDto> selectSubscriptionPost(String userId);
 
     List<SubscriptionChannelDto> selectSubscriptionChannel(String userId);
+    void updateSubscriberToChannel(Object chnlId);
 }

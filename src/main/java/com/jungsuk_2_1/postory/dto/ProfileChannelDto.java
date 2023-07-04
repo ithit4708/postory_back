@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 public class ProfileChannelDto {
     private String chnlImgPath;
     private String chnlTtl;
-    private int suberCnt;
     private String chnlIntro;
     private String chnlUri;
     private String chnlId;
     private Boolean isSubsed;
+    private Integer suberCnt;
 }

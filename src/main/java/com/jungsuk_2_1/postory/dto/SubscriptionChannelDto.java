@@ -18,4 +18,5 @@ public class SubscriptionChannelDto {
     private String userImgPath;
     private String nic;
     private Boolean isSubsed;
+    private Integer suberCnt;
 }
