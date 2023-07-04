@@ -39,11 +39,10 @@ public class SubscriptionController {
     }
 
     @DeleteMapping("/cancle")
-    public ResponseEntity<?> cancleSubscription(@AuthenticationPrincipal String userId, @RequestBody ChannelDto chnlId) {
+    public ResponseEntity<?> cancleSubscription(@AuthenticationPrincipal String userId, @RequestParam Integer chnlId) {
         Map<String, Object> subCancleInfoMap = new HashMap<>();
         subCancleInfoMap.put("userId", userId);
-        subCancleInfoMap.put("chnlId", chnlId.getChnlId());
-        log.warn("subCancleInfoMap = {}", subCancleInfoMap);
+        subCancleInfoMap.put("chnlId", chnlId);
 
         subscriptionService.removeFromSubscriptionList(subCancleInfoMap);
 
