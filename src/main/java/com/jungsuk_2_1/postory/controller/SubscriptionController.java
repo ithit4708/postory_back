@@ -53,9 +53,7 @@ public class SubscriptionController {
     public ResponseEntity<?> retrieveSubscriptionPostList(@AuthenticationPrincipal String userId) {
         //로그인한 유저의 uuid로 유저가 구독한 채널의 모든 포스트 목록 List 불러오기
         List<SubscriptionPostDto> subPostList = subscriptionService.getSubscriptionPostList(userId);
-        if (subPostList.get(0) == null) {
-            subPostList = new ArrayList<>();
-        }
+
         return ResponseEntity.ok().body(subPostList);
     }
 
@@ -63,9 +61,7 @@ public class SubscriptionController {
     public ResponseEntity<?> retrieveSubscriptionChannelList(@AuthenticationPrincipal String userId) {
         //로그인한 유저의 uuid로 유저가 구독한 모든 채널의 목록 불러오기
         List<SubscriptionChannelDto> subChannelList = subscriptionService.getSubscriptionChannelList(userId);
-        if (subChannelList.get(0) == null) {
-            subChannelList = new ArrayList<>();
-        }
+
         return ResponseEntity.ok().body(subChannelList);
     }
 }
