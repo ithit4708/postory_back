@@ -26,11 +26,18 @@
 
     <select id="selectSubscriptionChannel" parameterType="String" resultType="SubscriptionChannelDto">
         SELECT c.CHNL_IMG_PATH, c.CHNL_TTL, c.CHNL_INTRO, u.USER_IMG_PATH, u.NIC, c.CHNL_URI, c.CHNL_ID,
-               CASE WHEN s.user_id IS NULL THEN 0 ELSE 1 END AS isSubsed
+               CASE WHEN s.user_id IS NULL THEN 0 ELSE 1 END AS isSubsed, c.SUBER_CNT
         FROM subscription s
                  INNER JOIN channel c ON s.CHNL_ID = c.CHNL_ID
                  INNER JOIN user u ON c.CRT_ID = u.USER_ID
         WHERE s.USER_ID = #{userId}
         ORDER BY s.SUBR_DTM DESC;
     </select>
+
+    <update id="updateSubscriberToChannel" parameterType="Integer">
+        UPDATE channel c SET suber_cnt = (
+            SELECT count(*) FROM subscription s WHERE s.CHNL_ID = c.CHNL_ID
+        )
+        WHERE CHNL_ID = #{chnlId};
+    </update>
 </mapper>

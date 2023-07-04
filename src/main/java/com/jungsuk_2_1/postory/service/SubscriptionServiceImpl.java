@@ -16,12 +16,18 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
     @Override
     public void addToSubscriptionList(Map<String, Object> subInfo) {
+        //subscription 테이블에 해당 채널이 추가 됨
         subscriptionDao.insertSubscription(subInfo);
+        //channel 테이블에 해당 채널의 구독자 수가 count되어 update 되어야 함(+).
+        subscriptionDao.updateSubscriberToChannel(subInfo.get("chnlId"));
     }
 
     @Override
     public void removeFromSubscriptionList(Map<String, Object> subCancleInfo) {
+        //subscription 테이블에 해당 채널이 제거 됨
         subscriptionDao.deleteSubscription(subCancleInfo);
+        //channel 테이블에 해당 채널의 구독자 수가 count되어 update 되어야 함(-).
+        subscriptionDao.updateSubscriberToChannel(subCancleInfo.get("chnlId"));
     }
 
     @Override
