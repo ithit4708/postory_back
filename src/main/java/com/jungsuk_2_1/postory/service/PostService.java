@@ -2,15 +2,11 @@ package com.jungsuk_2_1.postory.service;
 
 import com.jungsuk_2_1.postory.dao.PostDao;
 import com.jungsuk_2_1.postory.dao.SeriesDao;
-import com.jungsuk_2_1.postory.dto.ChannelPostDto;
-import com.jungsuk_2_1.postory.dto.PostDto;
-import com.jungsuk_2_1.postory.dto.PostRelatedDto;
-import com.jungsuk_2_1.postory.dto.StudioPostDto;
+import com.jungsuk_2_1.postory.dto.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.lang.model.SourceVersion;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -143,5 +139,28 @@ public class PostService {
     postDao.updateBefPostNextPostId(postRelatedDto.getBefPostId(),postRelatedDto.getNextPostId());
     postDao.deletePost(postId);
     return postDao.doesExist(postId);
+  }
+
+    public List<ChannelPostDto> getPostsBySerId(Integer serId) {
+    return postDao.fingPostsBySerId(serId);
+    }
+
+  public ContentPostDto readPostById(String userId, Integer postId) {
+    postDao.increaseViewCount(postId);
+
+    Map<String, Object> params = new HashMap<>();
+    params.put("name","access");
+    params.put("postId", postId);
+    params.put("userId", userId);
+
+    boolean canSeePaid = postDao.checkUser(params);
+
+    if (canSeePaid){
+
+    }else {
+
+    }
+
+    return postDao.findByIdInContent(postId);
   }
 }

@@ -36,4 +36,12 @@ public interface PostDao {
     void deletePostBySerId(Integer serId);
 
     List<OnlyIdDto> findIdByChnlId(Integer chnlId);
+
+    List<ChannelPostDto> fingPostsBySerId(Integer serId);
+
+    ContentPostDto findByIdInContent(Integer postId);
+
+    boolean checkUser(Map<String, Object> params);
+
+    void increaseViewCount(Integer postId);
 }

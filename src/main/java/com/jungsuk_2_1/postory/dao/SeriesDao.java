@@ -2,6 +2,7 @@ package com.jungsuk_2_1.postory.dao;
 
 import com.jungsuk_2_1.postory.dto.ChannelSeriesDto;
 import com.jungsuk_2_1.postory.dto.OnlyIdDto;
+import com.jungsuk_2_1.postory.dto.SeriesDto;
 import com.jungsuk_2_1.postory.dto.StudioSeriesDto;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -27,4 +28,5 @@ public interface SeriesDao {
 
     void deleteSeriesByChnlId(Integer chnlId);
 
+    SeriesDto findByIdInChnl(Map<String, Object> params);
 }

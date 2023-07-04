@@ -83,7 +83,8 @@ public class ChannelPostDto {
     private String serTtl;
 
     private String nowPostStusCdNm;
-
     private Object styleText;
 
+    private String userNic;
+    private String userImgPath;
 }
