@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jungsuk_2_1.postory.dao.ScrapDao">
+    <insert id="insertScrap" parameterType="Map">
+        INSERT INTO scrap (USER_ID, POST_ID, SCRAP_DTM)
+        values (#{userId}, #{postId}, now())
+    </insert>
+
+    <delete id="deleteScrap" parameterType="Map">
+        DELETE FROM scrap WHERE USER_ID=#{userId} AND POST_ID=#{postId}
+    </delete>
+</mapper>
