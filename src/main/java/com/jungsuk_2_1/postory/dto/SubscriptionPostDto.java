@@ -26,4 +26,5 @@ public class SubscriptionPostDto {
     private int postLikCnt;
     private int postRepCnt;
     private Date postPblcDtm;
+    private Boolean isScraped;
 }

@@ -18,14 +18,16 @@ import java.util.Map;
 @RequestMapping("/scrap")
 public class ScrapController {
     ScrapService scrapService;
-    ScrapController(ScrapService scrapService){
+
+    ScrapController(ScrapService scrapService) {
         this.scrapService = scrapService;
     }
+
     @PostMapping
     public ResponseEntity<?> doScrap(@AuthenticationPrincipal String userId, @RequestBody PostDto postId) {
         Map<String, Object> scrapInfoMap = new HashMap<>();
-        scrapInfoMap.put("userId",userId);
-        scrapInfoMap.put("postId",postId.getPostId());
+        scrapInfoMap.put("userId", userId);
+        scrapInfoMap.put("postId", postId.getPostId());
         log.warn("scrapInfoMap = {}", scrapInfoMap);
 
         scrapService.addToScrapList(scrapInfoMap);
@@ -36,8 +38,8 @@ public class ScrapController {
     @DeleteMapping("/cancle")
     public ResponseEntity<?> cancleScrap(@AuthenticationPrincipal String userId, @RequestParam Integer postId) {
         Map<String, Object> scrapCancleInfoMap = new HashMap<>();
-        scrapCancleInfoMap.put("userId",userId);
-        scrapCancleInfoMap.put("postId",postId);
+        scrapCancleInfoMap.put("userId", userId);
+        scrapCancleInfoMap.put("postId", postId);
         log.warn("scrapCancleInfoMap = {}", scrapCancleInfoMap);
 
         scrapService.removeFromScrapList(scrapCancleInfoMap);
@@ -45,12 +47,10 @@ public class ScrapController {
         return ResponseEntity.ok().body(null);
     }
 
-//    @GetMapping
-//    public ResponseEntity<?> retrieveScrapPostList(@AuthenticationPrincipal String userId) {
-//        List<SubscriptionPostDto> subPostList = subscriptionService.getSubscriptionPostList(userId);
-//        if (subPostList.get(0) == null) {
-//            subPostList = new ArrayList<>();
-//        }
-//        return ResponseEntity.ok().body(subPostList);
-//    }
+    @GetMapping
+    public ResponseEntity<?> retrieveScrapPostList(@AuthenticationPrincipal String userId) {
+        List<SubscriptionPostDto> scrapPostList = scrapService.getScrapPostList(userId);
+
+        return ResponseEntity.ok().body(scrapPostList);
+    }
 }

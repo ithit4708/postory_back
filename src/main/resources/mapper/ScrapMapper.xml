@@ -10,4 +10,17 @@
     <delete id="deleteScrap" parameterType="Map">
         DELETE FROM scrap WHERE USER_ID=#{userId} AND POST_ID=#{postId}
     </delete>
+
+    <select id="selectScrapPost" parameterType="String" resultType="SubscriptionPostDto">
+        SELECT se.SER_TTL, p.POST_TTL, p.POST_SB_TTL, p.POST_THUMN_PATH, u.USER_IMG_PATH, u.NIC, p.POST_INQR_CNT,
+               p.POST_LIK_CNT,p.POST_REP_CNT, p.POST_PBLC_DTM, p.POST_ID, c.CHNL_URI, c.CHNL_ID,
+               CASE WHEN s.user_id IS NULL THEN 0 ELSE 1 END AS isScraped
+        FROM scrap s
+                 INNER JOIN post p ON s.POST_ID = p.POST_ID
+                 LEFT JOIN series se ON p.SER_ID = se.SER_ID
+                 INNER JOIN channel c ON p.CHNL_ID = c.CHNL_ID
+                 INNER JOIN user u ON c.CRT_ID = u.USER_ID
+        WHERE s.USER_ID = #{userId}
+        ORDER BY p.POST_PBLC_DTM DESC;
+    </select>
 </mapper>
