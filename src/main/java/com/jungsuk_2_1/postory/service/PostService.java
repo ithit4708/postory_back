@@ -86,7 +86,12 @@ public class PostService {
     return dto;
   }
 
-  public List<ChannelPostDto> getPostsByChnlUri (String chnlUri,int page, String orderMethod,int pageSize){
+  public List<ChannelPostDto> getPostsByChnlUri (String chnlUri,String postType,int page, String orderMethod,int pageSize){
+    if(postType.equals("webtoon")){
+      postType = "웹툰";
+    } else if(postType.equals("webnovel")){
+      postType = "웹소설";
+    }
 
     Map<String, Object> params = new HashMap<>();
     params.put("name", "channelPosts");
@@ -94,6 +99,8 @@ public class PostService {
     params.put("pageSize", pageSize);
     params.put("offset", (page - 1) * pageSize);
     params.put("orderMethod", orderMethod);
+    params.put("postType", postType);
+
 
     return postDao.getPostsByChnlUri(params);
   }

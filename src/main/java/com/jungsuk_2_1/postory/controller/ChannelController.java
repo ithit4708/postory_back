@@ -35,14 +35,19 @@ public class ChannelController{
         try {
             ChannelDto channel = channelService.retrieve(chnlUri);
             ChannelUserDto user = channelService.getUserByChannelUri(chnlUri);
-            List<ChannelPostDto> posts = postService.getPostsByChnlUri(chnlUri, 1, "latest",6);
+            List<ChannelPostDto> webtoons = postService.getPostsByChnlUri(chnlUri,"webtoon", 1, "latest",6);
+            List<ChannelPostDto> webnovels = postService.getPostsByChnlUri(chnlUri,"webnovel", 1, "latest",6);
             List<ChannelSeriesDto> serieses = seriesService.getSeriesByChnlUri(chnlUri, 1, "default",6);
+
+            System.out.println("webtoons = " + webtoons);
+            System.out.println("webnovel = " + webnovels);
 
 
             ChannelHomeDataDto channelHomeDto = ChannelHomeDataDto.builder().
                     channel(channel).
-                    channelPosts(posts).
                     channelUser(user).
+                    webtoons(webtoons).
+                    webnovels(webnovels).
                     channelSerieses(serieses).
                     build();
 //            List<ChannelHomeDataDto> data = new ArrayList<>();
@@ -73,21 +78,26 @@ public class ChannelController{
         }
     }
 
-    @GetMapping("/{chnlUri}/posts")
-    public ResponseEntity<?> retrievePosts(@PathVariable String chnlUri,@RequestParam(required = false, value = "page", defaultValue = "1") int page, @RequestParam(required = false, defaultValue = "latest") String orderMethod,@RequestParam(required = false, value = "count", defaultValue = "12") int pageSize){
-        System.out.println("page = " + page);
+    @GetMapping("/{chnlUri}/posts/{postType}")
+    public ResponseEntity<?> retrievePosts(@PathVariable String chnlUri,@PathVariable String postType, @RequestParam(required = false, value = "page", defaultValue = "1") int page, @RequestParam(required = false, defaultValue = "latest") String orderMethod,@RequestParam(required = false, value = "count", defaultValue = "12") int pageSize){
 
         try {
-            List<ChannelPostDto> posts = postService.getPostsByChnlUri(chnlUri, page, orderMethod,pageSize);
+            List<ChannelPostDto> posts = postService.getPostsByChnlUri(chnlUri, postType ,page, orderMethod,pageSize);
             ChannelDto channel = channelService.retrieve(chnlUri);
             ChannelUserDto user = channelService.getUserByChannelUri(chnlUri);
+            ChannelPostDataDto channelPostDataDto = null;
 
-            ChannelPostDataDto channelPostDataDto = ChannelPostDataDto.
-                    builder().
-                    channel(channel).
-                    channelUser(user).
-                    channelPosts(posts).
-                    build();
+            if(postType.equals("webtoon")) {
+                channelPostDataDto = ChannelPostDataDto.
+                        builder().
+                        channel(channel).
+                        channelUser(user).
+                        webtoons(posts).
+                        build();
+            } else if (postType.equals("webnovel")) {
+                channelPostDataDto = ChannelPostDataDto.builder().channel(channel).channelUser(user).webnovels(posts).build();
+
+            }
 //            List<ChannelPostDataDto> data = new ArrayList<>();
 //            data.add(channelSeriesDataDto);
             Map<String, Object>  data = new HashMap<>();

@@ -145,7 +145,8 @@
             c.CHNL_STUS_CHG_DTM,
             c.CHNL_SB_TTL,
             c.CHNL_INTRO,
-            (SELECT COUNT(*) FROM post as p WHERE p.CHNL_ID = c.CHNL_ID AND (now_post_stus_cd ='ST00420' OR now_post_stus_cd = 'ST00430')) as chnlPostCnt
+            (SELECT COUNT(*) FROM post as p INNER JOIN post_tag as pt on p.post_id = pt.post_id WHERE p.CHNL_ID = c.CHNL_ID AND (now_post_stus_cd ='ST00420' OR now_post_stus_cd = 'ST00430') AND pt.tag_id = 1) as chnlWebnovelCnt,
+            (SELECT COUNT(*) FROM post as p INNER JOIN post_tag as pt on p.post_id = pt.post_id WHERE p.CHNL_ID = c.CHNL_ID AND (now_post_stus_cd ='ST00420' OR now_post_stus_cd = 'ST00430') AND pt.tag_id = 2) as chnlWebtoonCnt
         FROM
             channel as c
                 INNER JOIN user AS user1 ON c.CRT_ID = user1.USER_ID
