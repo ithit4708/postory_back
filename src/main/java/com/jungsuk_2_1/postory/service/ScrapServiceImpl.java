@@ -10,9 +10,11 @@ import java.util.Map;
 @Service
 public class ScrapServiceImpl implements ScrapService {
     ScrapDao scrapDao;
+
     ScrapServiceImpl(ScrapDao scrapDao) {
         this.scrapDao = scrapDao;
     }
+
     @Override
     public void addToScrapList(Map<String, Object> scrapInfoMap) {
         scrapDao.insertScrap(scrapInfoMap);
@@ -22,6 +24,7 @@ public class ScrapServiceImpl implements ScrapService {
     public void removeFromScrapList(Map<String, Object> scrapCancleInfoMap) {
         scrapDao.deleteScrap(scrapCancleInfoMap);
     }
+
     @Override
     public List<SubscriptionPostDto> getScrapPostList(String userId) {
         return scrapDao.selectScrapPost(userId);
