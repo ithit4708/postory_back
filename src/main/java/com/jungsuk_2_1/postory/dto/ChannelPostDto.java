@@ -87,4 +87,6 @@ public class ChannelPostDto {
 
     private String userNic;
     private String userImgPath;
+
+    private String postType;
 }

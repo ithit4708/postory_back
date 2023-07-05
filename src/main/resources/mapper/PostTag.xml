@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jungsuk_2_1.postory.dao.PostTagDao">
+
+    <insert id="createPostTag" parameterType="map">
+        INSERT INTO post_tag(POST_ID, TAG_ID)
+        VALUES (#{postId}, IF(#{postType} = '웹소설', 1, IF(#{postType} = '웹툰', 2, 1)));
+    </insert>
+
+    <select id="findByPostId" parameterType="Integer" resultType="OnlyIdDto">
+        select tag_id as id
+        from post_tag
+        where post_id = #{postId}
+    </select>
+</mapper>

@@ -32,4 +32,6 @@ public class StudioPostDto {
     private String serTtl;
     private String userNic;
     private String nowPostStusCdNm;
+
+    private String postType;
 }

@@ -15,6 +15,7 @@ import java.util.List;
 public class ChannelHomeDataDto {
     private ChannelDto channel;
     private ChannelUserDto channelUser;
-    private List<ChannelPostDto> channelPosts;
+    private List<ChannelPostDto> webtoons;
+    private List<ChannelPostDto> webnovels;
     private List<ChannelSeriesDto> channelSerieses;
 }

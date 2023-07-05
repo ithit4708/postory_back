@@ -44,4 +44,5 @@ public interface PostDao {
     boolean checkUser(Map<String, Object> params);
 
     void increaseViewCount(Integer postId);
+
 }
