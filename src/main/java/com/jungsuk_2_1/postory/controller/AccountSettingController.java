@@ -32,7 +32,7 @@ public class AccountSettingController {
     public ResponseEntity<?> retrieveProfile(@AuthenticationPrincipal String userId) {
         try {
             ProfileUserDto profileUserDto = accountSettingService.findUserByUserId(userId);
-            
+
             return ResponseEntity.ok().body(profileUserDto);
         } catch (Exception e) {
             e.printStackTrace();
@@ -47,37 +47,36 @@ public class AccountSettingController {
                                              @RequestParam("file") MultipartFile userImgFile,
                                              @RequestParam("nic") String nic,
                                              @RequestParam("userIntro") String userIntro) {
-
-        String UPLOAD_PATH = "";
-        log.warn("UPLOAD_PATH = {}", UPLOAD_PATH);
-
         try {
             if (Objects.equals(nic, "")) {
                 throw new RuntimeException("닉네임을 입력해주세요");
             }
             if (Objects.equals(userImgFile, null)) {
-                //유저 이미지 경로가 빈문자열로 오면 null로 변환해서 DB에 저장
+                //유저 이미지 경로가 빈문자열로 오면 null로 변환해서 DB에 user 테이블 UPDATE 실시
                 UserDto userDto = UserDto.builder()
                         .userImgPath(null)
                         .nic(nic)
                         .userIntro(userIntro)
+                        .userId(userId)
                         .build();
                 accountSettingService.changeUserProfile(userDto);
             }
 
-//            if (userImgFile != null) {
-//                String fileId = userId;// 현재 날짜와 랜덤 정수값으로 새로운 파일명 만들기
-//                String originName = userImgFile.getOriginalFilename(); // ex) 파일.jpg
-//                String fileExtension = originName.substring(originName.lastIndexOf(".") + 1); // ex) jpg
-//                originName = originName.substring(0, originName.lastIndexOf(".")); // ex) 파일
-//
-//                File fileSave = new File(UPLOAD_PATH, fileId + "." + fileExtension); // ex) fileId.jpg
-//                if (!fileSave.exists()) { // 폴더가 없을 경우 폴더 만들기
-//                    fileSave.mkdirs();
-//                }
-//
-//                userImgFile.transferTo(fileSave); // fileSave의 형태로 파일 저장
-//            }
+            //유저 이미지가 존재하면 일단 먼저 정적 이미지 폴더에 저장
+            String saveFileName = accountSettingService.saveImage(userImgFile, userId);
+            //폴더에 저장된 파일에 경로를 앞에 붙여서 DB에 넣을 준비
+            saveFileName = "static/img/user/" + saveFileName;
+            //DB에 update 하기 위한 userDto 초기화
+            UserDto userDto = UserDto.builder()
+                    .userImgPath(saveFileName)
+                    .nic(nic)
+                    .userIntro(userIntro)
+                    .userId(userId)
+                    .build();
+            //user 테이블 UPDATE 실시
+            accountSettingService.changeUserProfile(userDto);
+
+            return ResponseEntity.ok().body(null);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -90,7 +89,6 @@ public class AccountSettingController {
             error.put("errMsg", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
-        return new ResponseEntity<Object>("Success", HttpStatus.OK);
     }
 
 }
