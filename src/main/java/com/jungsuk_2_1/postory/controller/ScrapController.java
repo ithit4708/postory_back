@@ -8,14 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/scrap")
+@RequestMapping("/library/scrap")
 public class ScrapController {
     ScrapService scrapService;
 
@@ -28,7 +27,6 @@ public class ScrapController {
         Map<String, Object> scrapInfoMap = new HashMap<>();
         scrapInfoMap.put("userId", userId);
         scrapInfoMap.put("postId", postId.getPostId());
-        log.warn("scrapInfoMap = {}", scrapInfoMap);
 
         scrapService.addToScrapList(scrapInfoMap);
 
@@ -40,7 +38,6 @@ public class ScrapController {
         Map<String, Object> scrapCancleInfoMap = new HashMap<>();
         scrapCancleInfoMap.put("userId", userId);
         scrapCancleInfoMap.put("postId", postId);
-        log.warn("scrapCancleInfoMap = {}", scrapCancleInfoMap);
 
         scrapService.removeFromScrapList(scrapCancleInfoMap);
 

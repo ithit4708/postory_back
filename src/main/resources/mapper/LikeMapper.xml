@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jungsuk_2_1.postory.dao.LikeDao">
+    <insert id="insertLike" parameterType="Map">
+        INSERT INTO post_like (LIK_ID, LIK_DTM, USER_ID, POST_ID)
+        SELECT next_id, NOW() ,#{userId}, #{postId}
+        FROM (SELECT IFNULL(MAX(SUBR_ID), 0) + 1 AS next_id FROM subscription) AS tmp;
+    </insert>
+
+    <delete id="deleteLike" parameterType="Map">
+        DELETE FROM post_like WHERE USER_ID=#{userId} AND POST_ID=#{postId}
+    </delete>
+
+    <select id="selectLikePost" parameterType="String" resultType="SubscriptionPostDto">
+        SELECT se.SER_TTL, p.POST_TTL, p.POST_SB_TTL, p.POST_THUMN_PATH, u.USER_IMG_PATH, u.NIC, p.POST_INQR_CNT,
+               p.POST_LIK_CNT,p.POST_REP_CNT, p.POST_PBLC_DTM, p.POST_ID, c.CHNL_URI, c.CHNL_ID,
+               CASE WHEN s.user_id IS NULL THEN 0 ELSE 1 END AS isScraped
+        FROM post_like l
+                 INNER JOIN post p ON l.POST_ID = p.POST_ID
+                 LEFT JOIN scrap s ON p.POST_ID = s.POST_ID
+                 LEFT JOIN series se ON p.SER_ID = se.SER_ID
+                 INNER JOIN channel c ON p.CHNL_ID = c.CHNL_ID
+                 INNER JOIN user u ON c.CRT_ID = u.USER_ID
+        WHERE l.USER_ID = #{userId}
+        ORDER BY p.POST_ID DESC;
+    </select>
+
+    <update id="updateLikeToPost" parameterType="Integer">
+        UPDATE post p SET POST_LIK_CNT = (
+            SELECT count(*) FROM post_like l WHERE l.POST_ID = p.POST_ID
+        )
+        WHERE POST_ID = #{postId};
+    </update>
+</mapper>

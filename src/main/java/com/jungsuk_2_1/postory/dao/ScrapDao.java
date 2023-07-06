@@ -9,7 +9,6 @@ import java.util.Map;
 @Mapper
 public interface ScrapDao {
     void insertScrap(Map<String, Object> scrapInfoMap);
-
     void deleteScrap (Map<String, Object> scrapCancleInfoMap);
     List<SubscriptionPostDto> selectScrapPost(String userId);
 }
