@@ -84,21 +84,6 @@ public class UserController {
                 final String token = tokenProvider.create(user);
                 //로그인한 유저 상태 확인
                 String userStatus = userService.checkUserStatus(user);
-
-                //유저의 상태가 신규=ST00110
-//                if (Objects.equals(userStatus, "ST00110")) {
-//                    HeaderUserDto newUser = HeaderUserDto.builder()
-//                            .token(token)
-//                            .eid(user.getEid())
-//                            .userStusCd(userStatus)
-//                            .build();
-//                    Map<String, Object> newUserMap = new HashMap<>();
-//                    newUserMap.put("user", newUser);
-//                    return ResponseEntity.ok().body(newUserMap);
-//                }
-//                //유저의 상태가 신규가 아님 =(ST00120) - 이메일인증 완료된 회원
-//                if (Objects.equals(userStatus, "ST00120")) {
-
                 //유저 상태 상관 없이
                 //로그인 후 헤더정보에 필요한 정보를 담기위한 HeaderUserDto userInfo 생성
                 HeaderUserDto userInfo = userService.getHeaderUserInfo(user.getUserId());
