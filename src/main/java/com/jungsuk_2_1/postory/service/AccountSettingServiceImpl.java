@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -106,6 +107,11 @@ public class AccountSettingServiceImpl implements AccountSettingService {
             // 파일 저장 중에 예외 발생
             throw new RuntimeException("Failed to store image file", e);
         }
+    }
+
+    @Override
+    public void changePwd(Map<String,String> userPwdMap) {
+        accountSettingDao.updateUserPwd(userPwdMap);
     }
 
     private static String extractValue(String errorMessage, String pattern) {
