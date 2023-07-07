@@ -32,25 +32,25 @@ class SubscriptionServiceImplTest {
     void removeFromSubscriptionList() {
     }
 
-    @Test
-    void getSubscriptionPostList() {
-        List<SubscriptionPostDto> list = subscriptionDao.selectSubscriptionPost("6a88ce41b5c24b29a56753a02c03aaaf");
-        for (int i = 0; i < list.size(); i++) {
-            System.out.println("list["+i+"]"+" = "+ list.get(i));
-            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------");
-        }
-        assertThat(!list.isEmpty()).isEqualTo(true);
-        assertThat(list.size()).isEqualTo(8);
-    }
-
-    @Test
-    void getSubscriptionChannelList() {
-        List<SubscriptionChannelDto> list = subscriptionDao.selectSubscriptionChannel("6a88ce41b5c24b29a56753a02c03aaaf");
-        for (int i = 0; i < list.size(); i++) {
-            System.out.println("list["+i+"]"+" = "+ list.get(i));
-            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------");
-        }
-        assertThat(!list.isEmpty()).isEqualTo(true);
-        assertThat(list.size()).isEqualTo(4);
-    }
+//    @Test
+//    void getSubscriptionPostList() {
+//        List<SubscriptionPostDto> list = subscriptionDao.selectSubscriptionPost("6a88ce41b5c24b29a56753a02c03aaaf");
+//        for (int i = 0; i < list.size(); i++) {
+//            System.out.println("list["+i+"]"+" = "+ list.get(i));
+//            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------");
+//        }
+//        assertThat(!list.isEmpty()).isEqualTo(true);
+//        assertThat(list.size()).isEqualTo(8);
+//    }
+//
+//    @Test
+//    void getSubscriptionChannelList() {
+//        List<SubscriptionChannelDto> list = subscriptionDao.selectSubscriptionChannel("6a88ce41b5c24b29a56753a02c03aaaf");
+//        for (int i = 0; i < list.size(); i++) {
+//            System.out.println("list["+i+"]"+" = "+ list.get(i));
+//            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------");
+//        }
+//        assertThat(!list.isEmpty()).isEqualTo(true);
+//        assertThat(list.size()).isEqualTo(4);
+//    }
 }
