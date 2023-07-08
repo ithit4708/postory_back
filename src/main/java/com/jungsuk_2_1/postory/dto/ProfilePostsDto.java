@@ -26,4 +26,5 @@ public class ProfilePostsDto {
     private String postThumnPath;
     private String userImgPath;
     private String nic;
+    private Boolean isScraped;
 }

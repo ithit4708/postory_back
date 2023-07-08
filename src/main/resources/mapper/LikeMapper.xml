@@ -15,10 +15,10 @@
     <select id="selectLikePost" parameterType="String" resultType="SubscriptionPostDto">
         SELECT se.SER_TTL, p.POST_TTL, p.POST_SB_TTL, p.POST_THUMN_PATH, u.USER_IMG_PATH, u.NIC, p.POST_INQR_CNT,
                p.POST_LIK_CNT,p.POST_REP_CNT, p.POST_PBLC_DTM, p.POST_ID, c.CHNL_URI, c.CHNL_ID,
-               CASE WHEN s.user_id IS NULL THEN 0 ELSE 1 END AS isScraped
+               CASE WHEN sc.user_id IS NULL THEN 0 ELSE 1 END AS isScraped
         FROM post_like l
                  INNER JOIN post p ON l.POST_ID = p.POST_ID
-                 LEFT JOIN scrap s ON p.POST_ID = s.POST_ID
+                 LEFT JOIN scrap sc ON p.POST_ID = sc.POST_ID AND sc.USER_ID = #{userId}
                  LEFT JOIN series se ON p.SER_ID = se.SER_ID
                  INNER JOIN channel c ON p.CHNL_ID = c.CHNL_ID
                  INNER JOIN user u ON c.CRT_ID = u.USER_ID

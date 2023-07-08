@@ -15,4 +15,10 @@
         FROM user
         WHERE USER_ID = #{userId}
     </select>
+
+    <update id="updateUserPwd" parameterType="Map">
+        UPDATE user
+        SET PWD = #{newPwd}
+        WHERE USER_ID = #{userId}
+    </update>
 </mapper>
