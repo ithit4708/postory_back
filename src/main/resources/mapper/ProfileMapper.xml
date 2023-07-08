@@ -28,11 +28,13 @@
     </select>
 
     <select id="findProfilePostsByUserId" parameterType="Map" resultType="ProfilePostsDto">
-        SELECT c.chnl_id, s.ser_id, s.SER_TTL, p.POST_ID, p.POST_TTL, p.POST_SB_TTL, p.POST_REP_CNT,p.POST_INQR_CNT, p.POST_LIK_CNT,
-               p.POST_PBLC_DTM, p.POST_THUMN_PATH, u.USER_IMG_PATH, u.NIC
+        SELECT c.chnl_id, se.ser_id, se.SER_TTL, p.POST_ID, p.POST_TTL, p.POST_SB_TTL, p.POST_REP_CNT,p.POST_INQR_CNT, p.POST_LIK_CNT,
+               p.POST_PBLC_DTM, p.POST_THUMN_PATH, u.USER_IMG_PATH, u.NIC,
+               CASE WHEN sc.user_id IS NULL THEN 0 ELSE 1 END AS isScraped
         FROM post p
                  INNER JOIN channel c ON p.CHNL_ID = c.CHNL_ID
-                 LEFT JOIN series s ON p.SER_ID = s.SER_ID
+                 LEFT JOIN scrap sc ON p.POST_ID = sc.POST_ID AND sc.USER_ID = #{userId}
+                 LEFT JOIN series se ON p.SER_ID = se.SER_ID
                  INNER JOIN user u ON c.CRT_ID = u.USER_ID
         WHERE c.CRT_ID = #{userId}
         ORDER BY p.POST_PBLC_DTM DESC
