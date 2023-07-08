@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 @Service
 public class AccountSettingServiceImpl implements AccountSettingService {
     AccountSettingDao accountSettingDao;
-    private static final String UPLOAD_DIRECTORY = "static/img/user";
+    private static final String UPLOAD_DIRECTORY = "src/main/resources/static/img/user";
 
     public AccountSettingServiceImpl(AccountSettingDao accountSettingDao) {
         this.accountSettingDao = accountSettingDao;

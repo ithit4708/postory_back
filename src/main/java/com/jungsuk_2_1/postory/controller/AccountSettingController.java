@@ -12,10 +12,13 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 @Slf4j
@@ -59,21 +62,41 @@ public class AccountSettingController {
             if (Objects.equals(nic, "")) {
                 throw new RuntimeException("닉네임을 입력해주세요");
             }
-            if (Objects.equals(userImgFile, null)) {
-                //유저 이미지 경로가 빈문자열로 오면 null로 변환해서 DB에 user 테이블 UPDATE 실시
-                UserDto userDto = UserDto.builder()
+
+            String originalFilename = userImgFile.getOriginalFilename();
+            log.warn("originalFilename = {}", originalFilename);
+            String fileExtension = StringUtils.getFilenameExtension(originalFilename);
+            ProfileUserDto profileUserDto = accountSettingService.findUserByUserId(userId);
+
+            if (fileExtension == null) {
+                //userImgFile == null이면, 기본이미지(null)인데 변경을 안하거나, 있던 이미지를 삭제하거나
+                //두 개의 경우의 수를 충족시키기 위해 DB에 null을 저장
+                UserDto notExistUploadUserImg = UserDto.builder()
                         .userImgPath(null)
                         .nic(nic)
                         .userIntro(userIntro)
                         .userId(userId)
                         .build();
-                accountSettingService.changeUserProfile(userDto);
+                accountSettingService.changeUserProfile(notExistUploadUserImg);
+
+                File userfile = new File("src/main/resources/" + profileUserDto.getUserImgPath());
+                if (userfile.exists()) {
+                    if (userfile.delete()) {
+                        System.out.println("파일삭제 성공");
+                    } else {
+                        System.out.println("파일삭제 실패");
+                    }
+                } else {
+                    System.out.println("파일이 존재하지 않습니다.");
+                }
+                return ResponseEntity.ok().body(null);
             }
 
-            //유저 이미지가 존재하면 일단 먼저 정적 이미지 폴더에 저장
+            // 유저 이미지가 존재한다는건, 기존의 이미지가 있거나, 새로운 파일을 업로드 했거나
+            // 업로드된 이미지를 먼저 정적 이미지 폴더에 저장
             String saveFileName = accountSettingService.saveImage(userImgFile, userId);
             //폴더에 저장된 파일에 경로를 앞에 붙여서 DB에 넣을 준비
-            saveFileName = "static/img/user/" + saveFileName;
+            saveFileName = "/static/img/user/" + saveFileName;
             //DB에 update 하기 위한 userDto 초기화
             UserDto userDto = UserDto.builder()
                     .userImgPath(saveFileName)
