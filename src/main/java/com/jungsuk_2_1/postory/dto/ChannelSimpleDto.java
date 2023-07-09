@@ -13,4 +13,9 @@ public class ChannelSimpleDto {
     private Integer chnlId;
     private String chnlUri;
     private String crtId;
+
+    private String chnlTtl;
+    private String chnlImgPath;
+
+    private String chnlIntro;
 }

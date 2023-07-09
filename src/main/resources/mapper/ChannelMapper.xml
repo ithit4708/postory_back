@@ -159,7 +159,7 @@
     </select>
 
     <select id="findIdByChnlUri" parameterType="String" resultType="ChannelSimpleDto">
-        select c.CHNL_ID
+        select c.CHNL_ID, c.CHNL_TTL, c.CHNL_URI, c.CHNL_SB_TTL, c.CHNL_INTRO, c.CHNL_IMG_PATH
         FROM channel as c
         where c.CHNL_URI = #{chnlUri}
     </select>
