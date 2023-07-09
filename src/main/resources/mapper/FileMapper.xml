@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jungsuk_2_1.postory.dao.FileDao">
+
+    <!-- tb_file 테이블 전체 컬럼 -->
+    <sql id="fileColumns">
+        file_id
+        , post_id
+        , file_path
+        , file_capct
+        , file_extns
+            ,file_reg_dtm
+        , img_file_wid
+        , img_file_hg
+    </sql>
+
+    <insert id="saveAll" parameterType="list">
+        INSERT INTO file (
+        <include refid="fileColumns" />
+        ) VALUES
+        <foreach item="file" collection="list" separator=",">
+            (
+            #{file.fileId}
+            , #{file.postId}
+            , #{file.filePath}
+            , #{file.fileCapct}
+            , #{file.extns}
+            , NOW()
+            , 100
+            , 100
+            )
+        </foreach>
+    </insert>
+
+    <insert id="save" parameterType="FileDto">
+        <selectKey resultType="Integer" keyProperty="fileId" order="BEFORE">
+            SELECT IFNULL(MAX(file_id),0)+1 FROM file
+        </selectKey>
+        INSERT INTO file(
+        file_id
+        , post_id
+        , file_path
+        , file_capct
+        , file_extns
+        , img_file_wid
+        , img_file_hg
+        )
+        VALUES (
+        #{fileId}
+        , #{postId}
+        , #{filePath}
+        , 100
+        , #{fileExtns}
+        , #{imgFileWid}
+        , #{imgFileHg}
+        )
+    </insert>
+
+    <delete id="deleteByPostId">
+        DELETE FROM file
+        WHERE post_id = #{postId}
+    </delete>
+
+    <select id="findLastId" resultType="Integer">
+        select max(file_id)
+        from file
+    </select>
+
+    <select id="getFilesByIdRange" parameterType="map" resultType="FileDto">
+        SELECT * FROM file
+        WHERE file_id BETWEEN #{startFileId} AND #{endFileId}
+    </select>
+
+    <select id="findById" parameterType="Integer" resultType="FileDto">
+        select *
+        from file
+        where file_id = #{fileId}
+    </select>
+    <select id="getFilesByPostId" parameterType="Integer" resultType="FileDto">
+       select * from file
+        where post_id = #{postId}
+    </select>
+
+
+</mapper>

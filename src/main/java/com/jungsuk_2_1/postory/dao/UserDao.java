@@ -21,4 +21,6 @@ public interface UserDao {
     ChannelUserDto findByChnlUri(String channelUri);
     List<HeaderChannelDto> findHeaderInfoByUserId(String userId);
     HeaderUserDto findHeaderUserInfoByUserId(String userId);
+
+    ChannelUserDto findByPostId(Integer postId);
 }

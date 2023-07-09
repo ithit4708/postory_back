@@ -17,4 +17,6 @@ public interface SubscriptionDao {
 
     List<SubscriptionChannelDto> selectSubscriptionChannel(String userId);
     void updateSubscriberToChannel(Object chnlId);
+
+    boolean isSubscribed(Map<String, Object> params);
 }

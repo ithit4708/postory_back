@@ -30,7 +30,7 @@ public class ChannelController{
     }
 
     @GetMapping("/{chnlUri}")
-    public ResponseEntity<?> retrieveChannel(@PathVariable(required = false) String chnlUri){
+    public ResponseEntity<?> retrieveChannel(@AuthenticationPrincipal String userId ,@PathVariable(required = false) String chnlUri){
 
         try {
             ChannelDto channel = channelService.retrieve(chnlUri);
@@ -180,22 +180,24 @@ public class ChannelController{
         }
     }
 
-    @GetMapping("/{chnlUri}/post/{postId}")
-    public ResponseEntity<?> retrievePost(@AuthenticationPrincipal String userId, @PathVariable String chnlUri, @PathVariable Integer postId){
+    @GetMapping("/{chnlUri}/subs/{nic}")
+    public ResponseEntity<?> retrieveSubscribe(@PathVariable String chnlUri, @PathVariable String nic){
 
-        try {
-            ContentPostDto post = postService.readPostById(userId, postId);
-            Map<String, Object> data = new HashMap<>();
-            data.put("data", "");
+        try{
+            boolean isSubscribed = channelService.checkSubcribes(chnlUri, nic);
+
+            Map<String, Object>  data = new HashMap<>();
+            data.put("data", isSubscribed);
 
             return ResponseEntity.ok().body(data);
-        } catch (Exception e){
+
+        } catch (Exception e) {
             Map error = new HashMap();
-            error.put("errMsg", e.getMessage());
+            error.put("errMsg",e.getMessage());
 
             return ResponseEntity.badRequest().body(error);
         }
-
     }
-
 }
+
+
