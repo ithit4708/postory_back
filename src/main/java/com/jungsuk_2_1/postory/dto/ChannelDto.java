@@ -68,7 +68,6 @@ public class ChannelDto {
     private String chnlStusChgDtm;
 
     private String crtNic;
-
     private Integer chnlWebtoonCnt;
     private Integer chnlWebnovelCnt;
 }
