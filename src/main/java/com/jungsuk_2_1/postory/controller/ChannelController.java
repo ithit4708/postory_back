@@ -81,7 +81,6 @@ public class ChannelController{
     @GetMapping("/{chnlUri}/posts/{postType}")
     public ResponseEntity<?> retrievePosts(@PathVariable String chnlUri,@PathVariable String postType, @RequestParam(required = false, value = "page", defaultValue = "1") int page, @RequestParam(required = false, defaultValue = "latest") String orderMethod,@RequestParam(required = false, value = "count", defaultValue = "12") int pageSize){
 
-
         try {
             List<ChannelPostDto> posts = postService.getPostsByChnlUri(chnlUri, postType ,page, orderMethod,pageSize);
             ChannelDto channel = channelService.retrieve(chnlUri);
