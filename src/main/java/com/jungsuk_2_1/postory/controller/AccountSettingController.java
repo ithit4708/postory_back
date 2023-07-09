@@ -63,14 +63,29 @@ public class AccountSettingController {
                 throw new RuntimeException("닉네임을 입력해주세요");
             }
 
-            String originalFilename = userImgFile.getOriginalFilename();
-            log.warn("originalFilename = {}", originalFilename);
-            String fileExtension = StringUtils.getFilenameExtension(originalFilename);
-            ProfileUserDto profileUserDto = accountSettingService.findUserByUserId(userId);
+            if (userImgFile != null && !userImgFile.isEmpty()) {
+                // 파일 처리 로직
+                // 유저 이미지가 존재한다는건, 기존의 이미지가 있거나, 새로운 파일을 업로드 했거나
+                // 업로드된 이미지를 먼저 정적 이미지 폴더에 저장
+                String saveFileName = accountSettingService.saveImage(userImgFile, userId);
+                //폴더에 저장된 파일에 경로를 앞에 붙여서 DB에 넣을 준비
+                saveFileName = "http://localhost:8080/static/img/user/" + saveFileName;
+                //DB에 update 하기 위한 userDto 초기화
+                UserDto userDto = UserDto.builder()
+                        .userImgPath(saveFileName)
+                        .nic(nic)
+                        .userIntro(userIntro)
+                        .userId(userId)
+                        .build();
+                //user 테이블 UPDATE 실시
+                accountSettingService.changeUserProfile(userDto);
 
-            if (fileExtension == null) {
+                return ResponseEntity.ok().body(null);
+            } else {
+                // 유저 이미지 파일이 업로드되지 않은 경우 처리
                 //userImgFile == null이면, 기본이미지(null)인데 변경을 안하거나, 있던 이미지를 삭제하거나
                 //두 개의 경우의 수를 충족시키기 위해 DB에 null을 저장
+                ProfileUserDto profileUserDto = accountSettingService.findUserByUserId(userId);
                 UserDto notExistUploadUserImg = UserDto.builder()
                         .userImgPath(null)
                         .nic(nic)
@@ -79,7 +94,7 @@ public class AccountSettingController {
                         .build();
                 accountSettingService.changeUserProfile(notExistUploadUserImg);
 
-                File userfile = new File("src/main/resources/" + profileUserDto.getUserImgPath());
+                File userfile = new File(profileUserDto.getUserImgPath().replace("http://localhost:8080", "src/main/resources"));
                 if (userfile.exists()) {
                     if (userfile.delete()) {
                         System.out.println("파일삭제 성공");
@@ -92,23 +107,9 @@ public class AccountSettingController {
                 return ResponseEntity.ok().body(null);
             }
 
-            // 유저 이미지가 존재한다는건, 기존의 이미지가 있거나, 새로운 파일을 업로드 했거나
-            // 업로드된 이미지를 먼저 정적 이미지 폴더에 저장
-            String saveFileName = accountSettingService.saveImage(userImgFile, userId);
-            //폴더에 저장된 파일에 경로를 앞에 붙여서 DB에 넣을 준비
-            saveFileName = "/static/img/user/" + saveFileName;
-            //DB에 update 하기 위한 userDto 초기화
-            UserDto userDto = UserDto.builder()
-                    .userImgPath(saveFileName)
-                    .nic(nic)
-                    .userIntro(userIntro)
-                    .userId(userId)
-                    .build();
-            //user 테이블 UPDATE 실시
-            accountSettingService.changeUserProfile(userDto);
-
-            return ResponseEntity.ok().body(null);
-
+//
+//            if (fileExtension == null) {
+//            }
         } catch (IOException e) {
             e.printStackTrace();
             Map<String, String> error = new HashMap<>();
