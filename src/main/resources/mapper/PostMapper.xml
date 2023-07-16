@@ -259,11 +259,47 @@
                  LEFT JOIN block as b ON b.POST_ID = p.POST_ID
         where p.post_id = #{postId}
     </select>
-    <select id="findChannelByPostId" parameterType="Integer" resultType="ChannelSimpleDto">
-        select c.chnl_ttl, c.chnl_sb_ttl, c.chnl_img_path, c.chnl_intro, c.chnl_uri
-        from post as p
-        INNER JOIN channel as c on p.chnl_id = c.chnl_id
-        where p.post_id = #{postId}
+
+    <select id="getPostsBySc" parameterType="map" resultType="ChannelPostDto">
+        SELECT p.*, s.SER_TTL, u.NIC as userNic, u.USER_IMG_PATH, tg.TAG_NM as postType
+        FROM post AS p
+        INNER JOIN channel AS c ON p.CHNL_ID = c.CHNL_ID
+        INNER JOIN common_code as cd ON p.NOW_POST_STUS_CD = cd.CD
+        LEFT JOIN series as s ON p.SER_ID = s.SER_ID
+        INNER JOIN user as u ON c.CRT_ID = u.USER_ID
+        INNER JOIN post_tag as pt on p.POST_ID = pt.POST_ID
+        INNER JOIN tag as tg on pt.TAG_ID = tg.TAG_ID
+        LEFT JOIN block as b ON b.POST_ID = p.POST_ID
+        WHERE
+        tg.TAG_NM = #{postType}
+<!--         AND (p.POST_TTL LIKE CONCAT('%', #{keyword}, '%') OR p.POST_CONTENT LIKE CONCAT('%', #{keyword}, '%'))-->
+        <choose>
+            <when test="option == 'title'">
+                AND p.POST_TTL LIKE CONCAT('%', #{keyword}, '%')
+            </when>
+            <when test="option == 'content'">
+                AND p.POST_CONTENT LIKE CONCAT('%', #{keyword}, '%')
+            </when>
+            <when test="option == 'all'">
+                AND (p.POST_TTL LIKE CONCAT('%', #{keyword}, '%') OR p.POST_CONTENT LIKE CONCAT('%', #{keyword}, '%'))
+            </when>
+        </choose>
+        <choose>
+            <when test="orderMethod == 'latest'">
+                ORDER BY
+                p.POST_ID DESC
+            </when>
+            <when test="orderMethod == 'popularity'">
+                ORDER BY p.POST_LIK_CNT DESC
+            </when>
+        </choose>
+          LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
+    <select id="findChannelByPostId" resultType="ChannelSimpleDto">
+        select c.chnl_ttl, c.chnl_img_path, c.chnl_ttl, c.chnl_uri, c.crt_id, c.chnl_intro, c.chnl_id
+        from post as p
+        inner join channel as c on p.chnl_id = c.chnl_id
+        where p.post_id = #{postId}
+    </select>
 </mapper>

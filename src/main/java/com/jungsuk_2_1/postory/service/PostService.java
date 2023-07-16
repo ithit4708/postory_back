@@ -207,9 +207,7 @@ public class PostService {
 
     for (String filePath : urls) {
       fileExtns = filePath.substring(filePath.lastIndexOf(".") + 1); // ex) jpg
-      System.out.println("filePath = " + filePath);
       filePath = filePath.substring(0, filePath.lastIndexOf(".")); // ex) 파일
-      System.out.println("filePath = " + filePath);
 
 
       FileDto file = FileDto.builder().filePath(filePath).fileExtns(fileExtns).postId(postId).build();
@@ -240,18 +238,13 @@ public class PostService {
   public PostViewDto readPostById(String userId, Integer postId) {
     postDao.increaseViewCount(postId);
     List<FileDto> files = fileDao.getFilesByPostId(postId);
-    System.out.println("files = " + files);
 
     PostViewDto dto = postDao.findByIdInContent(postId);
-    System.out.println("dto = " + dto);
     List<String> urls = new ArrayList<>();
-    System.out.println("urls = " + urls);
 
     for(FileDto file : files) {
       String url = file.getFilePath()+"."+file.getFileExtns();
-      System.out.println("url = " + url);
       urls.add(url);
-      System.out.println("urls = " + urls);
     }
     dto.setImageUrls(urls);
     System.out.println("dto = " + dto);
