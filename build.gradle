@@ -42,7 +42,8 @@ dependencies {
 	//FileUtils
 	compileOnly group : 'commons-io', name: 'commons-io', version: '2.7'
 	// https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-aws
-//	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.6.RELEASE'
+
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 tasks.named('test') {
