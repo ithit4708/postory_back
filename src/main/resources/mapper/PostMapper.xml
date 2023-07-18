@@ -7,14 +7,14 @@
         INSERT INTO post (POST_ID, POST_TTL, POST_SB_TTL, POST_PCHRG_YN,
                           POST_THUMN_PATH, SER_ID, PCHRG_BLK_PURC_PNT, NTCE_SETT_YN, ADO_YN, CHNL_ID,
                           BASIC_FONT_CD, BASIC_PARAG_ALGN_CD, ITD_YN, PARAG_GAP_MARG_YN, NOW_POST_STUS_CD,
-                          NOW_POST_STUS_CHGR_ID, BEF_POST_ID, NEXT_POST_ID)
+                          NOW_POST_STUS_CHGR_ID, BEF_POST_ID, NEXT_POST_ID,POST_CONTENT)
         SELECT #{postId}, #{postTtl}, #{postSbTtl}, #{postPchrgYn},
                #{postThumnPath}, #{serId}, #{pchrgBlkPurcPnt}, #{ntceSettYn}, #{adoYn}, (SELECT CHNL_ID FROM channel WHERE CHNL_URI = #{chnlUri}),
-               (SELECT CD FROM common_code WHERE CD_NM = #{basicFontCdNm}),
-               (SELECT CD FROM common_code WHERE CD_NM = #{basicParagAlgnCdNm}),
+               "FT00120",
+               "AL00130",
                #{itdYn}, #{paragGapMargYn},
-               (SELECT CD FROM common_code WHERE CD_NM = #{nowPostStusCdNm}),
-               #{nowPostStusChgrId}, #{befPostId}, #{nextPostId}
+               "ST00420",
+               #{nowPostStusChgrId}, #{befPostId}, #{nextPostId}, #{postContent}
     </insert>
 
     <update id="updateNextPostId" parameterType="map">
@@ -32,12 +32,13 @@
             PCHRG_BLK_PURC_PNT = #{pchrgBlkPurcPnt},
             NTCE_SETT_YN = #{ntceSettYn},
             ADO_YN = #{adoYn},
-            BASIC_FONT_CD = (SELECT CD FROM common_code WHERE CD_NM = #{basicFontCdNm}),
-            BASIC_PARAG_ALGN_CD = (SELECT CD FROM common_code WHERE CD_NM = #{basicParagAlgnCdNm}),
+            BASIC_FONT_CD =  "FT00120",
+            BASIC_PARAG_ALGN_CD = "AL00130",
             ITD_YN = #{itdYn},
             PARAG_GAP_MARG_YN = #{paragGapMargYn},
-            NOW_POST_STUS_CD = (SELECT CD FROM common_code WHERE CD_NM = #{nowPostStusCdNm}),
-            NOW_POST_STUS_CHGR_ID = #{nowPostStusChgrId}
+            NOW_POST_STUS_CD =  "ST00420",
+            NOW_POST_STUS_CHGR_ID = #{nowPostStusChgrId},
+            POST_CONTENT = #{postContent}
         WHERE POST_ID = #{postId};
 
     </update>
@@ -60,7 +61,7 @@
         where POST_ID = #{postId};
     </update>
 
-    <update id="increaseViewCount" parameterType="String">
+    <update id="increaseViewCount" parameterType="Integer">
         UPDATE post
         SET POST_INQR_CNT = POST_INQR_CNT + 1
         WHERE POST_ID = #{postId}
@@ -95,15 +96,13 @@
     </select>
 
     <select id="fingPostsBySerId" parameterType="map" resultType="ChannelPostDto">
-        SELECT p.*, s.SER_TTL, cd.CD_NM as nowPostStusCdNm , u.NIC, tb.STYLE_TEXT
+        SELECT p.*, s.SER_TTL, cd.CD_NM as nowPostStusCdNm , u.NIC
         FROM post AS p
         INNER JOIN channel AS c ON p.CHNL_ID = c.CHNL_ID
-        INNER JOIN common_code as cd ON p.NOW_POST_STUS_CD = cd.CD
+        LEFT JOIN common_code as cd ON p.NOW_POST_STUS_CD = cd.CD
         LEFT JOIN series as s ON p.SER_ID = s.SER_ID
         INNER JOIN user as u ON c.CRT_ID = u.USER_ID
         LEFT JOIN block as b ON b.POST_ID = p.POST_ID
-        LEFT JOIN text_block as tb ON tb.BLK_ID = b.BLK_ID AND b.BLK_KIND_CD =
-        (SELECT CD FROM common_code WHERE CD_NM = '텍스트블록')
         WHERE s.SER_ID = #{serId}
         <choose>
             <when test="orderMethod == 'latest'">
@@ -131,7 +130,7 @@
     </delete>
 
     <select id="getPostsByChnlUri" parameterType="map" resultType="ChannelPostDto">
-        SELECT p.*, s.SER_TTL, cd.CD_NM as nowPostStusCdNm , u.NIC as userNic, u.USER_IMG_PATH, tb.STYLE_TEXT, tg.TAG_NM as postType
+        SELECT p.*, s.SER_TTL, u.NIC as userNic, u.USER_IMG_PATH, tg.TAG_NM as postType
         FROM post AS p
         INNER JOIN channel AS c ON p.CHNL_ID = c.CHNL_ID
         INNER JOIN common_code as cd ON p.NOW_POST_STUS_CD = cd.CD
@@ -140,8 +139,8 @@
             INNER JOIN post_tag as pt on p.POST_ID = pt.POST_ID
             INNER JOIN tag as tg on pt.TAG_ID = tg.TAG_ID
         LEFT JOIN block as b ON b.POST_ID = p.POST_ID
-        LEFT JOIN text_block as tb ON tb.BLK_ID = b.BLK_ID AND b.BLK_KIND_CD =
-        (SELECT CD FROM common_code WHERE CD_NM = '텍스트블록')
+--         LEFT JOIN text_block as tb ON tb.BLK_ID = b.BLK_ID AND b.BLK_KIND_CD =
+--         (SELECT CD FROM common_code WHERE CD_NM = '텍스트블록')
         WHERE c.CHNL_URI = #{chnlUri} AND
               tg.TAG_NM = #{postType}
         <choose>
@@ -201,7 +200,7 @@
         WHERE c.CHNL_URI = #{chnlUri}
     </select>
 
-    <select id="findById" parameterType="Integer" resultType="StudioPostDto">
+    <select id="findById" parameterType="Integer" resultType="PostDto">
         SELECT p.POST_ID as postId,
                p.POST_TTL as postTtl,
                p.POST_INQR_CNT as postInqrCnt,
@@ -221,10 +220,11 @@
         FROM post as p
                  INNER JOIN channel c ON p.CHNL_ID = c.CHNL_ID
                  INNER JOIN user as u ON c.CRT_ID = u.USER_ID
-                 INNER JOIN common_code as cc ON p.NOW_POST_STUS_CD = cc.CD
+                 LEFT JOIN common_code as cc ON p.NOW_POST_STUS_CD = cc.CD
                  LEFT JOIN series as s ON p.SER_ID = s.SER_ID
-        WHERE p.POST_ID = #{postId};
+        WHERE p.POST_ID = #{postId}
     </select>
+
 
     <select id="doesExist" parameterType="Integer" resultType="java.lang.Boolean">
         select exists(select  1 from post where POST_ID = #{postID})
@@ -247,9 +247,23 @@
         where CHNL_ID = #{chnlId}
     </select>
 
-    <select id="findByIdInContent" resultType="ContentPostDto">
-        select p.*
-        from post as p
-        where post_id = #{postId}
+    <select id="findByIdInContent" parameterType="Integer" resultType="PostViewDto">
+        SELECT p.*, s.SER_TTL, cd.CD_NM as nowPostStusCdNm , u.NIC as userNic, u.USER_IMG_PATH, tg.TAG_NM as postType, p.POST_CONTENT, c.CHNL_URI
+        FROM post AS p
+                 INNER JOIN channel AS c ON p.CHNL_ID = c.CHNL_ID
+                 INNER JOIN common_code as cd ON p.NOW_POST_STUS_CD = cd.CD
+                 LEFT JOIN series as s ON p.SER_ID = s.SER_ID
+                 INNER JOIN user as u ON c.CRT_ID = u.USER_ID
+                 INNER JOIN post_tag as pt on p.POST_ID = pt.POST_ID
+                 INNER JOIN tag as tg on pt.TAG_ID = tg.TAG_ID
+                 LEFT JOIN block as b ON b.POST_ID = p.POST_ID
+        where p.post_id = #{postId}
     </select>
+    <select id="findChannelByPostId" parameterType="Integer" resultType="ChannelSimpleDto">
+        select c.chnl_ttl, c.chnl_sb_ttl, c.chnl_img_path, c.chnl_intro, c.chnl_uri
+        from post as p
+        INNER JOIN channel as c on p.chnl_id = c.chnl_id
+        where p.post_id = #{postId}
+    </select>
+
 </mapper>

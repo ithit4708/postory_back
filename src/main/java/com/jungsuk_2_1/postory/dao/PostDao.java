@@ -16,7 +16,7 @@ public interface PostDao {
     Integer findInNonSeries(Map<String, Object> params);
     StudioPostDto findInStudioByChnlUri(String chnlUri);
     void updateNextPostId(Map<String,Object> params);
-    StudioPostDto findById(Integer postId);
+    PostDto findById(Integer postId);
 
     PostRelatedDto findRelatedPostById(Integer postId);
 
@@ -39,10 +39,11 @@ public interface PostDao {
 
     List<ChannelPostDto> fingPostsBySerId(Integer serId);
 
-    ContentPostDto findByIdInContent(Integer postId);
+    PostViewDto findByIdInContent(Integer postId);
 
     boolean checkUser(Map<String, Object> params);
 
     void increaseViewCount(Integer postId);
 
+    ChannelSimpleDto findChannelByPostId(Integer postId);
 }

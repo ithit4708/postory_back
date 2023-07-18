@@ -1,9 +1,6 @@
 package com.jungsuk_2_1.postory.service;
 
-import com.jungsuk_2_1.postory.dao.ChannelDao;
-import com.jungsuk_2_1.postory.dao.PostDao;
-import com.jungsuk_2_1.postory.dao.SeriesDao;
-import com.jungsuk_2_1.postory.dao.UserDao;
+import com.jungsuk_2_1.postory.dao.*;
 import com.jungsuk_2_1.postory.dto.ChannelDto;
 import com.jungsuk_2_1.postory.dto.ChannelSimpleDto;
 import com.jungsuk_2_1.postory.dto.ChannelUserDto;
@@ -12,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,15 +23,17 @@ public class ChannelService {
     private final SeriesService seriesService;
     private final SeriesDao seriesDao;
     private final PostDao postDao;
+    private final SubscriptionDao subscriptionDao;
 
     @Autowired
-    public ChannelService(ChannelDao channelDao, UserDao userDao, PostService postService, SeriesService seriesService, SeriesDao seriesDao, PostDao postDao){
+    public ChannelService(ChannelDao channelDao, UserDao userDao, PostService postService, SeriesService seriesService, SeriesDao seriesDao, PostDao postDao, SubscriptionDao subscriptionDao){
         this.channelDao = channelDao;
         this.userDao = userDao;
         this.postService = postService;
         this.seriesService = seriesService;
         this.seriesDao = seriesDao;
         this.postDao = postDao;
+        this.subscriptionDao = subscriptionDao;
     }
 
     public ChannelUserDto getUserByChannelUri(final String channelUri){
@@ -117,5 +117,13 @@ public class ChannelService {
             log.warn("Uri already exists");
             throw new RuntimeException("Uri already exists");
         }
+    }
+
+    public boolean checkSubcribes(String chnlUri, String nic) {
+        Map<String,Object> params = new HashMap<>();
+        params.put("name", "isSubscribed");
+        params.put("chnlUri", chnlUri);
+        params.put("nic", nic);
+       return subscriptionDao.isSubscribed(params);
     }
 }

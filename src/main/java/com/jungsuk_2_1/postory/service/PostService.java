@@ -1,13 +1,12 @@
 package com.jungsuk_2_1.postory.service;
 
-import com.jungsuk_2_1.postory.dao.PostDao;
-import com.jungsuk_2_1.postory.dao.PostTagDao;
-import com.jungsuk_2_1.postory.dao.SeriesDao;
+import com.jungsuk_2_1.postory.dao.*;
 import com.jungsuk_2_1.postory.dto.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,14 +17,22 @@ public class PostService {
   private final PostDao postDao;
   private final SeriesDao seriesDao;
   private final PostTagDao postTagDao;
+  private final FileDao fileDao;
+
+  private final UserDao userDao;
+
+  private final PostLikeDao postLikeDao;
 
   @Autowired
-  PostService(PostDao postDao, SeriesDao seriesDao, PostTagDao postTagDao) {
+  PostService(PostDao postDao, SeriesDao seriesDao, PostTagDao postTagDao, FileDao fileDao, UserDao userDao, PostLikeDao postLikeDao) {
     this.postDao = postDao;
     this.seriesDao = seriesDao;
     this.postTagDao = postTagDao;
+    this.fileDao = fileDao;
+    this.userDao = userDao;
+    this.postLikeDao = postLikeDao;
   }
-  public StudioPostDto createPost (String userId, PostDto postDto){
+  public PostDto createPost (String userId, PostDto postDto){
 
     Integer newPostId = postDao.findLastId() + 1;
 
@@ -51,16 +58,24 @@ public class PostService {
     params.put("adoYn", postDto.getAdoYn());
     params.put("chnlId", postDto.getChnlId());
     params.put("chnlUri", postDto.getChnlUri());
-    params.put("basicFontCdNm", postDto.getBasicFontCdNm());
-    params.put("basicParagAlgnCdNm", postDto.getBasicParagAlgnCdNm());
+//    params.put("basicFontCdNm", postDto.getBasicFontCdNm());
+//    params.put("basicParagAlgnCdNm", postDto.getBasicParagAlgnCdNm());
+    params.put("basicFontCdNm", "고딕체");
+    params.put("basicParagAlgnCdNm", "가운데정렬");
     params.put("itdYn", postDto.getItdYn());
     params.put("paragGapMargYn", postDto.getParagGapMargYn());
     params.put("nowPostStusCdNm", postDto.getNowPostStusCdNm());
+    params.put("nowPostStusCdNm", "최초발행");
     params.put("nowPostStusChgrId", userId);
     params.put("befPostId", befPostId);
     params.put("nextPostId", null);
+    params.put("postContent", postDto.getPostContent());
 
+    System.out.println("params = " + params);
+    
     postDao.createPost(params);
+
+    System.out.println("params = " + params);
 
     Map<String, Object> args = new HashMap<>();
     args.put("postId", befPostId);
@@ -74,13 +89,39 @@ public class PostService {
     postTagDao.createPostTag(data);
 
     OnlyIdDto id = postTagDao.findByPostId(newPostId);
-    StudioPostDto dto = postDao.findById(newPostId);
+
+    System.out.println("id = " + id);
+    PostDto dto = postDao.findById(newPostId);
+
+    System.out.println("dto = " + dto);
 
     if (id.getId() == 1) {
       dto.setPostType("웹소설");
     } else if (id.getId() == 2){
       dto.setPostType("웹툰");
     }
+
+    List<String> urls = postDto.getImageUrls();
+    String fileExtns;
+
+    for(String filePath: urls){
+      fileExtns = filePath.substring(filePath.lastIndexOf(".") + 1); // ex) jpg
+      System.out.println("filePath = " + filePath);
+      filePath = filePath.substring(0, filePath.lastIndexOf(".")); // ex) 파일
+      System.out.println("filePath = " + filePath);
+
+
+      FileDto file = FileDto.builder().filePath(filePath).fileExtns(fileExtns).postId(newPostId).build();
+      System.out.println("file = " + file);
+      try {
+        fileDao.save(file);
+      } catch (Exception e) {
+        e.printStackTrace();  // or use logger
+      }
+    }
+
+    dto.setImageUrls(urls);
+    System.out.println("dto = " + dto);
 
 
     return dto;
@@ -133,7 +174,7 @@ public class PostService {
 
   }
 
-  public StudioPostDto updatePost (String userId, Integer postId, PostDto postDto){
+  public PostDto updatePost (String userId, Integer postId, PostDto postDto) {
 
 
     Map<String, Object> params = new HashMap<>();
@@ -152,10 +193,37 @@ public class PostService {
     params.put("paragGapMargYn", postDto.getParagGapMargYn());
     params.put("nowPostStusCdNm", postDto.getNowPostStusCdNm());
     params.put("nowPostStusChgrId", userId);
+    params.put("postContent", postDto.getPostContent());
+
+    System.out.println("postDto.getPostContent() = " +postDto.getPostContent());
 
     postDao.updatePost(params);
-    return postDao.findById(postId);
+
+    fileDao.deleteByPostId(postId);
+
+    List<String> urls = postDto.getImageUrls();
+    System.out.println("200 urls = " + urls);
+    String fileExtns;
+
+    for (String filePath : urls) {
+      fileExtns = filePath.substring(filePath.lastIndexOf(".") + 1); // ex) jpg
+      System.out.println("filePath = " + filePath);
+      filePath = filePath.substring(0, filePath.lastIndexOf(".")); // ex) 파일
+      System.out.println("filePath = " + filePath);
+
+
+      FileDto file = FileDto.builder().filePath(filePath).fileExtns(fileExtns).postId(postId).build();
+      System.out.println("file = " + file);
+      try {
+        fileDao.save(file);
+      } catch (Exception e) {
+        e.printStackTrace();  // or use logger
+      }
+    }
+
+      return postDao.findById(postId);
   }
+
   public boolean deletePost(Integer postId){
 
     PostRelatedDto postRelatedDto = postDao.findRelatedPostById(postId);
@@ -169,22 +237,40 @@ public class PostService {
     return postDao.fingPostsBySerId(serId);
     }
 
-  public ContentPostDto readPostById(String userId, Integer postId) {
+  public PostViewDto readPostById(String userId, Integer postId) {
     postDao.increaseViewCount(postId);
+    List<FileDto> files = fileDao.getFilesByPostId(postId);
+    System.out.println("files = " + files);
 
-    Map<String, Object> params = new HashMap<>();
-    params.put("name","access");
-    params.put("postId", postId);
-    params.put("userId", userId);
+    PostViewDto dto = postDao.findByIdInContent(postId);
+    System.out.println("dto = " + dto);
+    List<String> urls = new ArrayList<>();
+    System.out.println("urls = " + urls);
 
-    boolean canSeePaid = postDao.checkUser(params);
-
-    if (canSeePaid){
-
-    }else {
-
+    for(FileDto file : files) {
+      String url = file.getFilePath()+"."+file.getFileExtns();
+      System.out.println("url = " + url);
+      urls.add(url);
+      System.out.println("urls = " + urls);
     }
+    dto.setImageUrls(urls);
+    System.out.println("dto = " + dto);
 
-    return postDao.findByIdInContent(postId);
+    return dto;
+  }
+
+  public ChannelUserDto getUserByPostId(Integer postId) {
+    return userDao.findByPostId(postId);
+  }
+
+  public ChannelSimpleDto getChannelByPostId(Integer postId){
+    return postDao.findChannelByPostId(postId);
+  }
+
+  public boolean checkLike(Integer postId, String nic) {
+    Map<String,Object> params = new HashMap<>();
+    params.put("postId", postId);
+    params.put("nic", nic);
+    return postLikeDao.isLiked(params);
   }
 }

@@ -5,14 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class PostDto {
-    /* POST_ID */
+public class PostViewDto {
     private Integer postId;
 
     /* POST_TTL */
@@ -50,6 +50,7 @@ public class PostDto {
 
     /* NTCE_SETT_YN */
     private Object ntceSettYn;
+
     /* ADO_YN */
     private Object adoYn;
 
@@ -59,16 +60,23 @@ public class PostDto {
     /* CHNL_ID */
     private Integer chnlId;
 
+    /* BASIC_FONT_CD */
+    private Object basicFontCd;
+
+    /* BASIC_PARAG_ALGN_CD */
+    private Object basicParagAlgnCd;
+
     /* ITD_YN */
     private Object itdYn;
 
     /* PARAG_GAP_MARG_YN */
     private Object paragGapMargYn;
 
-    private String nowPostStudChgDtm;
+    /* NOW_POST_STUS_CD */
+    private Object nowPostStusCd;
 
-    /* NOW_POST_STUS_CHGR_ID */
-    private String nowPostStusChgrId;
+    /* NOW_POST_STUD_CHG_DTM */
+    private String nowPostStudChgDtm;
 
     /* BEF_POST_ID */
     private Integer befPostId;
@@ -76,17 +84,18 @@ public class PostDto {
     /* NEXT_POST_ID */
     private Integer nextPostId;
 
-    private String chnlUri;
-
-    private String basicFontCdNm;
-
-    private String basicParagAlgnCdNm;
+    private String serTtl;
 
     private String nowPostStusCdNm;
+    private Object styleText;
+    private String chnlUri;
+
+    private String userNic;
+    private String userImgPath;
 
     private String postType;
 
-    private List<String> imageUrls;
-
     private String postContent;
+
+    private List<String> imageUrls;
 }
