@@ -33,10 +33,10 @@
                CASE WHEN sc.user_id IS NULL THEN 0 ELSE 1 END AS isScraped
         FROM post p
                  INNER JOIN channel c ON p.CHNL_ID = c.CHNL_ID
-                 LEFT JOIN scrap sc ON p.POST_ID = sc.POST_ID AND sc.USER_ID = #{userId}
+                 LEFT JOIN scrap sc ON p.POST_ID = sc.POST_ID AND sc.USER_ID = #{loginUserId}
                  LEFT JOIN series se ON p.SER_ID = se.SER_ID
                  INNER JOIN user u ON c.CRT_ID = u.USER_ID
-        WHERE c.CRT_ID = #{userId}
+        WHERE c.CRT_ID = #{profileUserId}
         ORDER BY p.POST_PBLC_DTM DESC
         LIMIT #{offset}, 5;
     </select>
@@ -47,7 +47,7 @@
         FROM series s
                  LEFT JOIN channel c on s.chnl_id = c.chnl_id
                  INNER JOIN user u ON c.CRT_ID = u.USER_ID
-        where c.crt_id = #{userId}
+        where c.crt_id = #{profileUserId}
         ORDER BY s.ser_open_dtm
         LIMIT #{offset}, 5;
     </select>
