@@ -103,8 +103,7 @@ public class ProfileController {
 
         int offset = (page - 1) * 10;
         Map<String, Object> dataMap = new HashMap<>();
-        dataMap.put("profileUserId", profileUser.getUserId());
-        dataMap.put("loginUserId", userId);
+        dataMap.put("userId", profileUser.getUserId());
         dataMap.put("offset", offset);
 
         List<?> dataList;
