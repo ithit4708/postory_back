@@ -107,17 +107,17 @@ public class FileController {
 //            https://postory-image.s3.ap-northeast-2.amazonaws.com/src/16895093343242601.png
 
             String fileUrl = "https://postory-image.s3.ap-northeast-2.amazonaws.com/src/"+ fileId + "."+ fileExtension;
-            System.out.println("fileUrl = " + fileUrl);
             amazonS3Client.putObject(bucket,fileId+"."+ fileExtension,file.getInputStream(),metadata);
 
-            File fileSave = new File(UPLOAD_PATH, fileId + "." + fileExtension); // ex) fileId.jpg
-            if(!fileSave.exists()) { // 폴더가 없을 경우 폴더 만들기
-                fileSave.mkdirs();
-            }
+//            File fileSave = new File(UPLOAD_PATH, fileId + "." + fileExtension); // ex) fileId.jpg
+//            if(!fileSave.exists()) { // 폴더가 없을 경우 폴더 만들기
+//                fileSave.mkdirs();
+//            }
 
-            file.transferTo(fileSave); // fileSave의 형태로 파일 저장
+//            file.transferTo(fileSave); // fileSave의 형태로 파일 저장
 //            url = fileId + "." + fileExtension;
-            url = fileUrl + "." + fileExtension;
+//            url = fileUrl + "." + fileExtension;
+            url = fileUrl;
 
 //
             System.out.println("fileId= " + fileId);
