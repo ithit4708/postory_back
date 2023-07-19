@@ -30,11 +30,12 @@ public class SearchService {
         return dtos;
     }
 
-    public List<ChannelPostDto> searchPost(String option, String keyword, String postType, int page, String orderMethod, int pageSize){
+    public List<ChannelPostDto> searchPost(String userId, String option, String keyword, String postType, int page, String orderMethod, int pageSize){
         String postTypeNm = (postType.equals("webtoon") ? "웹툰" : "웹소설");
 
         Map<String, Object> params = new HashMap<>();
         params.put("name", "searchPosts");
+        params.put("userId", userId);
         params.put("pageSize", pageSize);
         params.put("offset", (page - 1) * pageSize);
         params.put("postType",postTypeNm);

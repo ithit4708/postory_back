@@ -37,7 +37,7 @@ public class FileController {
     @PostMapping("/uploadFiles")
     public ResponseEntity<Object> uploadFiles(MultipartFile[] multipartFiles) {
 
-        String UPLOAD_PATH = "/Users/ho/Workspace/sanwangjapki/postory_front/public/images";
+//        String UPLOAD_PATH = "/Users/ho/Workspace/sanwangjapki/postory_front/public/images";
 
         List<Object> urls = new ArrayList<>();
         List<FileDto> fileList = new ArrayList<>();
@@ -61,12 +61,12 @@ public class FileController {
                 System.out.println("fileUrl = " + fileUrl);
                 amazonS3Client.putObject(bucket,fileId+"."+fileExtension, file.getInputStream(),metadata);
 
-                File fileSave = new File(UPLOAD_PATH, fileId + "." + fileExtension); // ex) fileId.jpg
-                if(!fileSave.exists()) { // 폴더가 없을 경우 폴더 만들기
-                    fileSave.mkdirs();
-                }
-
-                file.transferTo(fileSave); // fileSave의 형태로 파일 저장
+//                File fileSave = new File(UPLOAD_PATH, fileId + "." + fileExtension); // ex) fileId.jpg
+//                if(!fileSave.exists()) { // 폴더가 없을 경우 폴더 만들기
+//                    fileSave.mkdirs();
+//                }
+//
+//                file.transferTo(fileSave); // fileSave의 형태로 파일 저장
                 urls.add(fileUrl);
 
                 System.out.println("fileId= " + fileId);
@@ -86,7 +86,7 @@ public class FileController {
 
     @PostMapping("/uploadThumn")
     public ResponseEntity<Object> uploadThumn(MultipartFile file) {
-        String UPLOAD_PATH = "/Users/ho/Workspace/sanwangjapki/postory_front/public/images";
+//        String UPLOAD_PATH = "/Users/ho/Workspace/sanwangjapki/postory_front/public/images";
 
         String url;
 

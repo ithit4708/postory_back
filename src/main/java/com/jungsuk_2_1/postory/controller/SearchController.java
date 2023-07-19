@@ -55,13 +55,13 @@ public class SearchController {
     }
 
     @GetMapping("/{postType}/posts")
-    public ResponseEntity<?> searchPost(@PathVariable String postType, @RequestParam(required = false, value = "page", defaultValue = "1") int page, @RequestParam(required = false, defaultValue = "latest") String orderMethod, @RequestParam(required = false, value = "count", defaultValue = "12") int pageSize, @RequestParam String option, @RequestParam String keyword){
+    public ResponseEntity<?> searchPost(@AuthenticationPrincipal String userId, @PathVariable String postType, @RequestParam(required = false, value = "page", defaultValue = "1") int page, @RequestParam(required = false, defaultValue = "latest") String orderMethod, @RequestParam(required = false, value = "count", defaultValue = "12") int pageSize, @RequestParam String option, @RequestParam String keyword){
 
         System.out.println("postType = " + postType);
         System.out.println("keyword = " + keyword);
         try {
 
-            List<ChannelPostDto> posts = searchService.searchPost(option,keyword, postType ,page, orderMethod,pageSize);
+            List<ChannelPostDto> posts = searchService.searchPost(userId,option,keyword, postType ,page, orderMethod,pageSize);
             Integer searchCNt = posts.size();
 
             System.out.println("post = " + posts);
