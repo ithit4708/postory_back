@@ -60,8 +60,8 @@ public class SearchController {
         System.out.println("postType = " + postType);
         System.out.println("keyword = " + keyword);
         try {
-
             List<ChannelPostDto> posts = searchService.searchPost(userId,option,keyword, postType ,page, orderMethod,pageSize);
+
             Integer searchCNt = posts.size();
 
             System.out.println("post = " + posts);

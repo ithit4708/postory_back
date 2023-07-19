@@ -275,7 +275,6 @@
         LEFT JOIN block as b ON b.POST_ID = p.POST_ID
         WHERE
         tg.TAG_NM = #{postType}
-        <!--         AND (p.POST_TTL LIKE CONCAT('%', #{keyword}, '%') OR p.POST_CONTENT LIKE CONCAT('%', #{keyword}, '%'))-->
         <choose>
             <when test="option == 'title'">
                 AND p.POST_TTL LIKE CONCAT('%', #{keyword}, '%')
