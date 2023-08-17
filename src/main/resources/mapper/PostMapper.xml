@@ -214,12 +214,16 @@
                p.CHNL_ID as chnlId,
                p.NOW_POST_STUS_CD as nowPostStusCd,
                p.NOW_POST_STUD_CHG_DTM as nowPostStudChgDtm,
+               p.BEF_POST_ID,
+               p.NEXT_POST_ID,
+               pt.TAG_ID as tagId,
                s.SER_TTL as serTtl,
                u.NIC as userNic,
                cc.CD_NM as nowPostStusCdNm
         FROM post as p
                  INNER JOIN channel c ON p.CHNL_ID = c.CHNL_ID
                  INNER JOIN user as u ON c.CRT_ID = u.USER_ID
+            INNER JOIN  post_tag as pt ON p.POST_ID = pt.POST_ID
                  LEFT JOIN common_code as cc ON p.NOW_POST_STUS_CD = cc.CD
                  LEFT JOIN series as s ON p.SER_ID = s.SER_ID
         WHERE p.POST_ID = #{postId}

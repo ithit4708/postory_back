@@ -67,8 +67,9 @@ public class PostController {
 
     @PostMapping("/create")
     ResponseEntity<?> createPost(@AuthenticationPrincipal String userId, @RequestBody PostDto postDto) {
+        postDto.setUserId(userId);
         try {
-            PostDto post = postService.createPost(userId, postDto);
+            PostDto post = postService.createPost(postDto);
 
             Map<String, Object> data = new HashMap<>();
 
