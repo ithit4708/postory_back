@@ -36,7 +36,6 @@ public class SearchService {
         Map<String, Object> params = new HashMap<>();
         params.put("name", "searchPosts");
         params.put("userId", userId);
-
         params.put("pageSize", pageSize);
         params.put("offset", (page - 1) * pageSize);
         params.put("postType",postTypeNm);
