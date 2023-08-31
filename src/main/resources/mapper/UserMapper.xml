@@ -13,8 +13,8 @@
     </select>
 
     <insert id="save" parameterType="UserDto">
-        insert into user (USER_ID, EID, PWD, NIC, USER_INTRO, USER_IMG_PATH, SIGNUP_DTM, HOLD_PNT, MSG_ALOW_YN)
-        values (#{userId}, #{eid}, #{pwd}, #{nic}, #{userIntro}, #{userImgPath}, now(), #{holdPnt}, true);
+        insert into user (USER_ID, EID, PWD, NIC, USER_INTRO, USER_IMG_PATH, SIGNUP_DTM, HOLD_PNT, MSG_ALOW_YN, ROLE_KEY)
+        values (#{userId}, #{eid}, #{pwd}, #{nic}, #{userIntro}, #{userImgPath}, now(), #{holdPnt}, true, #{roleKey});
     </insert>
 
     <insert id="statusSave" parameterType="UserDto">

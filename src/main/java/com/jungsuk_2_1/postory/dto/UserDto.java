@@ -23,8 +23,14 @@ public class UserDto {
     private Date signupDtm;
     private int holdPnt;
     private boolean msgAlowYn;
-    private String role; // 사용자의 롤. 예 : 어드민, 일반사용자
+    private String roleKey;
     private String authProvider; // 이후 OAuth에서 사용할 유저 정보 제공자 : github
     private String currentPwd;
     private String newPwd;
+
+
+    public UserDto update(String name) {
+        this.nic = name;
+        return this;
+    }
 }
