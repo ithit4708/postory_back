@@ -1,15 +1,19 @@
 package com.jungsuk_2_1.postory.config;
 
 import com.jungsuk_2_1.postory.security.JwtAuthenticationFilter;
+import com.jungsuk_2_1.postory.security.OAuthSuccessHandler;
+import com.jungsuk_2_1.postory.security.RedirectUrlCookieFilter;
+import com.jungsuk_2_1.postory.service.CustomOAuthUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -25,8 +29,17 @@ import java.util.Arrays;
 public class WebSecurityConfig {
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    WebSecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    private CustomOAuthUserService oAuthUserService;
+
+    private OAuthSuccessHandler oAuthSuccessHandler;
+    private RedirectUrlCookieFilter redirectUrlFilter;
+
+    @Autowired
+    WebSecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, CustomOAuthUserService oAuthUserService, OAuthSuccessHandler oAuthSuccessHandler, RedirectUrlCookieFilter redirectUrlFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.oAuthUserService = oAuthUserService;
+        this.oAuthSuccessHandler = oAuthSuccessHandler;
+        this.redirectUrlFilter = redirectUrlFilter;
     }
 
     @Bean
@@ -38,9 +51,25 @@ public class WebSecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests() // "/" 와 " /auth/** " 경로는 인증 안 해도 됨.
-                .antMatchers("/", "/auth/**").permitAll()
-                .anyRequest() // "/" 와 " /auth/** " 경로 이외에는 인증 해야 됨.
-                .authenticated();
+                .antMatchers("/", "/auth/**","/oauth2/**","/login/oauth2/**","/favicon.ico").permitAll()
+                .anyRequest()
+                .authenticated()
+                        .and()
+                .oauth2Login()
+                .redirectionEndpoint()
+                .baseUri("/login/oauth2/code/*")
+                .and()
+                .authorizationEndpoint()
+                .baseUri("/auth/authorize")
+                .and()
+                .userInfoEndpoint()
+                .userService(oAuthUserService)
+                .and()
+                .successHandler(oAuthSuccessHandler)
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(new Http403ForbiddenEntryPoint());
+                ;
 
         // filter 등록
         // 매 요청마다
@@ -49,6 +78,10 @@ public class WebSecurityConfig {
         http.addFilterAfter(
                 jwtAuthenticationFilter,
                 CorsFilter.class
+        );
+        http.addFilterBefore(
+                redirectUrlFilter,
+                OAuth2AuthorizationRequestRedirectFilter.class
         );
         return http.build();
     }
