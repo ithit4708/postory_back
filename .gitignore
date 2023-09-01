@@ -352,6 +352,10 @@ $RECYCLE.BIN/
 **/build/
 !src/**/build/
 
+# Ignore applicaoin.properties
+src/main/resources/application.properties
+application.properties
+
 # Ignore Gradle GUI config
 gradle-app.setting
 

@@ -89,4 +89,5 @@ public class ChannelPostDto {
     private String userImgPath;
 
     private String postType;
+    private Boolean isScraped;
 }

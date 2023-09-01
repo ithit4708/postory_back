@@ -46,4 +46,6 @@ public interface PostDao {
     void increaseViewCount(Integer postId);
 
     ChannelSimpleDto findChannelByPostId(Integer postId);
+
+    List<ChannelPostDto> getPostsBySc(Map<String,Object> params);
 }

@@ -89,4 +89,6 @@ public class PostDto {
     private List<String> imageUrls;
 
     private String postContent;
+    private String userId;
+    private Integer tagId;
 }

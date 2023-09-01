@@ -17,5 +17,4 @@ public class ChannelUserDto {
     private String userIntro;
     private String userImgPath;
     private boolean msgAlowYn = true;
-
 }

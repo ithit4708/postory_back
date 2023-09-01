@@ -70,4 +70,6 @@ public class ChannelDto {
     private String crtNic;
     private Integer chnlWebtoonCnt;
     private Integer chnlWebnovelCnt;
+
+    private Boolean isSubsed;
 }
